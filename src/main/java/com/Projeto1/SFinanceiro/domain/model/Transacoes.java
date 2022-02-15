@@ -28,6 +28,7 @@ public class Transacoes {
 	private Contas conta;
 	private Float valor;
 	private String tipoMovimentacao;
+	private Integer tipo;
 	@Column(name = "data_registro")
 	private OffsetDateTime data;
 	private Float saldo_inicial;

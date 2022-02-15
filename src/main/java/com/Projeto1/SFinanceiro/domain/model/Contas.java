@@ -46,10 +46,11 @@ public class Contas {
 	private Float saldo;
 
 
-	public Transacoes efetuarTransacao(String tipoMovimentacao, Float valor, Float avalor) {
+	public Transacoes efetuarTransacao(String tipoMovimentacao, Float valor, Float avalor, Integer tipo) {
 		Transacoes transacao = new Transacoes(); 
 		transacao.setTipoMovimentacao(tipoMovimentacao);
 		transacao.setSaldo_inicial(avalor);
+		transacao.setTipo(tipo);
 		transacao.setValor(valor);
 		transacao.setData(OffsetDateTime.now());
 		transacao.setConta(this);

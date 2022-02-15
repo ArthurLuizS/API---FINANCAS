@@ -29,15 +29,30 @@ public class RelatorioService {
 	
 	public Relatorio numeroTransacoes(Long contaId) {
 		
+		
+		
 		Contas conta = buscacontaService.buscar(contaId);
 		Float[] taxas = {(float) 1, (float) 0.75, (float) 0.5};
 		Relatorio r = new Relatorio();
 		Endereco e = conta.getCliente().getEndereco();
+		//---------
+		List<Transacoes> transacoesd = new ArrayList<>();
+		List<Transacoes> transacoesc = new ArrayList<>();
+		transacoesd = conta.getTransacoes().stream().filter(t -> t.getTipo() == 1).toList();
+		transacoesc = conta.getTransacoes().stream().filter(t -> t.getTipo() == 2).toList();
+		r.setMovimentacaoDebito(transacoesd.size());
+		r.setMovimentacaoCredito(transacoesc.size());
+		//---------
 		//sets manuais
 		r.setMovimentacoes(conta.getTransacoes().size());
+	
+		//r.setMovimentacaoDebito(conta.getTransacoes().);
 		r.setCliente(conta.getCliente().getNome());
 		r.setEndereco(e.getCidade().concat(" , ").concat(e.getBairro().concat(e.getLogradouro()) ));
 		r.setData_cliente(conta.getCliente().getData_cliente());
+		
+		r.setSaldoInicial(conta.getTransacoes().get(0).getSaldo_inicial());
+		r.setSaldoAtual(conta.getSaldo());
 		
 		
 		//
@@ -67,6 +82,7 @@ public class RelatorioService {
 		 * 
 		 * fazer o calculo de descnto por cada movimentação
 		 * */
+		
 		return r  ;
 	}
 }
