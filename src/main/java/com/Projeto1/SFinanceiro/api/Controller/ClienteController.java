@@ -16,6 +16,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.Projeto1.SFinanceiro.api.Assembler.ClienteAssembler;
+import com.Projeto1.SFinanceiro.api.Model.ClienteOutput;
+import com.Projeto1.SFinanceiro.api.Model.ContaOutput;
+import com.Projeto1.SFinanceiro.api.Model.input.ClienteInput;
+import com.Projeto1.SFinanceiro.api.Model.input.ContaInput;
 import com.Projeto1.SFinanceiro.domain.model.Cliente;
 import com.Projeto1.SFinanceiro.domain.model.Contas;
 import com.Projeto1.SFinanceiro.domain.model.Transacoes;
@@ -31,27 +36,39 @@ public class ClienteController {
 	@Autowired
 	private ClienteRepository clienteRepository;
 	private CrudCliente crudCliente;
+	private ClienteAssembler clienteAssembler;
 	
 	@GetMapping
-	public List<Cliente> listar() {
-	
-		return clienteRepository.findAll();
+	public List<ClienteOutput> listar() {
+
+		return clienteAssembler.toCollectionModel(clienteRepository.findAll());
 	} 
 	
 	@GetMapping("/{clienteId}")
-	public ResponseEntity<Cliente> buscar(@PathVariable Long clienteId) {
+	public ResponseEntity<ClienteOutput> buscar(@PathVariable Long clienteId) {
 		return clienteRepository.findById(clienteId)
-				.map(cliente -> ResponseEntity.ok(cliente))
+				.map(cliente -> ResponseEntity.ok(clienteAssembler.toModel(cliente)))
 				.orElse(ResponseEntity.notFound().build());
 			
 	}
 	
+	
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public Cliente cadastrar (@RequestBody Cliente cliente/* Contas conta, Transacoes transacao*/) {
-		cliente.setData_cliente(OffsetDateTime.now());
+	public Cliente cadastrar (@RequestBody ClienteInput clienteInput/* Contas conta, Transacoes transacao*/) {
+		clienteInput.setData_cliente(OffsetDateTime.now());
+		Cliente nCliente = clienteAssembler.toEntity(clienteInput);
+		//Cliente novoCliente = crudCliente.salvar(nCliente);
 		/*cliente.cadastrarContas(conta.getNumeroConta());*/
-		return crudCliente.salvar(cliente/* conta, transacao*/);
+		return crudCliente.salvar(nCliente/* conta, transacao*/);
+		
+		/*public ContaOutput cadastrar (@RequestBody ContaInput contaInput) {
+		
+		Contas nConta = contaAssembler.toEntity(contaInput);
+		Contas novaConta = contaService.cadastrar(nConta);
+		
+		return contaAssembler.toModel(novaConta);
+	}*/
 	}
 	
 	@PutMapping("/{clienteId}")

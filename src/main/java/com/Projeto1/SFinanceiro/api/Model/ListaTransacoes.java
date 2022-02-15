@@ -12,5 +12,6 @@ public class ListaTransacoes {
 	private Float valor;
 	private String tipoMovimentacao;
 	private OffsetDateTime data;
+	private Float saldo_inicial;
 	
 }

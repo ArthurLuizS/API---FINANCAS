@@ -43,12 +43,13 @@ public class Contas {
 	/*@Column(name = "saldo_inicial")
 	private BigDecimal saldoIn; */
 	
-	private BigDecimal saldo;
+	private Float saldo;
 
 
-	public Transacoes efetuarTransacao(String tipoMovimentacao, BigDecimal valor) {
+	public Transacoes efetuarTransacao(String tipoMovimentacao, Float valor, Float avalor) {
 		Transacoes transacao = new Transacoes(); 
 		transacao.setTipoMovimentacao(tipoMovimentacao);
+		transacao.setSaldo_inicial(avalor);
 		transacao.setValor(valor);
 		transacao.setData(OffsetDateTime.now());
 		transacao.setConta(this);

@@ -1,5 +1,7 @@
 package com.Projeto1.SFinanceiro.api.Model.input;
 
+import java.time.OffsetDateTime;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,5 +12,6 @@ public class ContaInput {
 	private String numeroConta;
 	private String tipoMovimentacao;
 	private Float saldo;
+	
 	
 }

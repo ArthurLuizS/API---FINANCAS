@@ -16,6 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -47,6 +48,9 @@ public class Cliente {
 	
 	@OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
 	private List<Contas> conta = new ArrayList<>();
+	
+	@Transient
+	private Relatorio relatorio;
 	
 	public Contas cadastrarContas(String numeroConta /*, String tipoMovimentacao, BigDecimal valor*/) {
 		Contas contas = new Contas(); 
