@@ -23,12 +23,14 @@ public class RegistroTransacaoService {
 			Integer tipo = null;
 			Float avalor = conta.getSaldo();
 			Float nvalor = null;
-			if(tipoMovimentacao.contains("de") || tipoMovimentacao.contains("De") ) {
+			if(conta.getSaldo() >= valor && tipoMovimentacao.contains("de") || tipoMovimentacao.contains("De") ) {
 				nvalor = avalor - valor;
 				tipo = 1;
 			}else if(tipoMovimentacao.contains("cr") || tipoMovimentacao.contains("Cr")) {
 				nvalor = avalor + valor;
 				tipo = 2;
+			}else {
+				 throw new Error("saldo Insuficiente, saldo atual : ".concat(conta.getSaldo().toString()));
 			}
 			
 			conta.setSaldo(nvalor);
