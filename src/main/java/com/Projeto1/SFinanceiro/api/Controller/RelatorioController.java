@@ -1,34 +1,46 @@
 package com.Projeto1.SFinanceiro.api.Controller;
 
-import java.util.List;
+import java.time.OffsetDateTime;
+import java.util.Date;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.Projeto1.SFinanceiro.api.Model.ListaTransacoes;
-import com.Projeto1.SFinanceiro.api.Model.RelatorioOutput;
 import com.Projeto1.SFinanceiro.domain.model.Relatorio;
-import com.Projeto1.SFinanceiro.domain.model.Transacoes;
-import com.Projeto1.SFinanceiro.domain.service.RegistroTransacaoService;
+import com.Projeto1.SFinanceiro.domain.model.RelatorioPeriodo;
+import com.Projeto1.SFinanceiro.domain.model.RelatorioSaldo;
 import com.Projeto1.SFinanceiro.domain.service.RelatorioService;
 
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("contas/{contaId}/relatorio")
+@RequestMapping("contas/relatorio/")
 public class RelatorioController {
+	
+	
 private RelatorioService relatorioService;
 	
-	@GetMapping
+	@GetMapping("/{contaId}")
 	public Relatorio listar(@PathVariable Long contaId) {
 		
-		return relatorioService.numeroTransacoes(contaId);
+		return relatorioService.relatorioIndividual(contaId);
+	}
+	
+	@GetMapping("{contaId}/p")
+	public RelatorioPeriodo listarPeriodo(@PathVariable Long contaId,
+			@RequestBody String dataInicio, String dataFim) {
+		
+		return relatorioService.relatorioPeriodo(contaId, dataInicio, dataFim);
+	}
+	
+	@GetMapping
+	public RelatorioSaldo listarTodos() {
+		
+		return relatorioService.relatorioSaldo();
+		
 	}
 }

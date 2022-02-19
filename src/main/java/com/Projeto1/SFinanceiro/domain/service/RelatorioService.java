@@ -2,22 +2,18 @@ package com.Projeto1.SFinanceiro.domain.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Stream;
 
-import org.hibernate.transform.ToListResultTransformer;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.Projeto1.SFinanceiro.api.Assembler.ContaAssembler;
-import com.Projeto1.SFinanceiro.api.Model.ContaOutput;
-import com.Projeto1.SFinanceiro.api.Model.ListaTransacoes;
-import com.Projeto1.SFinanceiro.api.Model.RelatorioOutput;
+import com.Projeto1.SFinanceiro.domain.model.Cliente;
 import com.Projeto1.SFinanceiro.domain.model.Contas;
 import com.Projeto1.SFinanceiro.domain.model.Endereco;
 import com.Projeto1.SFinanceiro.domain.model.Relatorio;
+import com.Projeto1.SFinanceiro.domain.model.RelatorioPeriodo;
+import com.Projeto1.SFinanceiro.domain.model.RelatorioSaldo;
 //import com.Projeto1.SFinanceiro.domain.model.Relatorio;
 import com.Projeto1.SFinanceiro.domain.model.Transacoes;
+import com.Projeto1.SFinanceiro.domain.repository.ClienteRepository;
 import com.Projeto1.SFinanceiro.domain.repository.ContasRepository;
 
 import lombok.AllArgsConstructor;
@@ -26,10 +22,9 @@ import lombok.AllArgsConstructor;
 @Service
 public class RelatorioService {
 	private BuscaContaService buscacontaService;
-	
-	public Relatorio numeroTransacoes(Long contaId) {
-		
-		
+	private ClienteRepository clienteRepository;
+	private ContasRepository contasRepository;
+	public Relatorio relatorioIndividual(Long contaId) {
 		
 		Contas conta = buscacontaService.buscar(contaId);
 		Float[] taxas = {(float) 1, (float) 0.75, (float) 0.5};
@@ -82,7 +77,17 @@ public class RelatorioService {
 		 * 
 		 * fazer o calculo de descnto por cada movimentação
 		 * */
-		
 		return r  ;
+	}
+
+	public RelatorioPeriodo relatorioPeriodo(Long contaId, String dataInicio, 
+			String dataFim) {
+			
+		return null;
+	}
+
+	public RelatorioSaldo relatorioSaldo() {
+		
+		return null;
 	}
 }

@@ -21,10 +21,10 @@ public class ContasService {
 	private ClienteRepository clienteRepository;
 	//private CrudCliente crudCliente;
 	
-	public Cliente buscar(Long clienteId) {
+	/*public Cliente buscar(Long clienteId) {
 		return clienteRepository.findById(clienteId)
 				.orElseThrow(() -> new NegocioException("Cliente não encontrado"));
-	}
+	}*/
 	
 	@Transactional
 	public Contas cadastrar (Contas conta) {
@@ -32,8 +32,8 @@ public class ContasService {
 		/*String clienteIdent = cliente.getIdentificador();*/
 		
 		
-		Cliente cliente = clienteRepository.findById(conta.getCliente().getId())
-				.orElseThrow( () -> new NegocioException("cliente nao encontrado"));
+		/*Cliente cliente = clienteRepository.findById(conta.getCliente().getId())
+				.orElseThrow( () -> new NegocioException("cliente nao encontrado"));*/
 		
 		//Cliente cliente =  crudCliente.buscar(conta.getCliente().getId());
 		
@@ -41,7 +41,7 @@ public class ContasService {
 		
 		/**/ conta.setDataConta(OffsetDateTime.now());
 	
-		conta.setCliente(cliente);
+		//conta.setCliente(cliente);
 		return contasRepository.save(conta);
 	}
 }

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.Projeto1.SFinanceiro.api.Assembler.ClienteAssembler;
+import com.Projeto1.SFinanceiro.api.Assembler.ContaAssembler;
 import com.Projeto1.SFinanceiro.api.Model.ClienteOutput;
 import com.Projeto1.SFinanceiro.api.Model.ContaOutput;
 import com.Projeto1.SFinanceiro.api.Model.input.ClienteInput;
@@ -25,7 +26,9 @@ import com.Projeto1.SFinanceiro.domain.model.Cliente;
 import com.Projeto1.SFinanceiro.domain.model.Contas;
 import com.Projeto1.SFinanceiro.domain.model.Transacoes;
 import com.Projeto1.SFinanceiro.domain.repository.ClienteRepository;
+import com.Projeto1.SFinanceiro.domain.service.ContasService;
 import com.Projeto1.SFinanceiro.domain.service.CrudCliente;
+import com.Projeto1.SFinanceiro.domain.service.RegistroTransacaoService;
 
 import lombok.AllArgsConstructor;
 
@@ -37,6 +40,9 @@ public class ClienteController {
 	private ClienteRepository clienteRepository;
 	private CrudCliente crudCliente;
 	private ClienteAssembler clienteAssembler;
+	private ContaAssembler contaAssembler;
+	private ContasService contaService;
+	private RegistroTransacaoService registroTransacaoService;
 	
 	@GetMapping
 	public List<ClienteOutput> listar() {
@@ -55,12 +61,34 @@ public class ClienteController {
 	
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public Cliente cadastrar (@RequestBody ClienteInput clienteInput/* Contas conta, Transacoes transacao*/) {
+	public Cliente cadastrar (@RequestBody ClienteInput clienteInput  ,  ContaInput contaInput /*Transacoes transacao*/) {
 		clienteInput.setData_cliente(OffsetDateTime.now());
+		//clienteInput.setContas(contaInput);
 		Cliente nCliente = clienteAssembler.toEntity(clienteInput);
+		
+
+		//nCliente.setConta(contaService.cadastrar(nConta)); 
+		
+	//	nCliente.setConta(); */
 		//Cliente novoCliente = crudCliente.salvar(nCliente);
 		/*cliente.cadastrarContas(conta.getNumeroConta());*/
-		return crudCliente.salvar(nCliente/* conta, transacao*/);
+		
+		
+		Cliente clienteSalvo = crudCliente.salvar(nCliente/* conta, transacao*/);
+
+		Contas nConta  = contaAssembler.toEntity(contaInput); 
+		nConta.setCliente(clienteSalvo);
+		nConta.setNumeroConta(clienteInput.getContas().getNumeroConta());
+		nConta.setSaldo(clienteInput.getContas().getSaldo());
+		List<Transacoes> transacao = nConta.getTransacoes();
+		
+		nConta.efetuarTransacao(clienteInput.getContas().getTipoMovimentacao(), clienteInput.getContas().getSaldo(), null, 1);
+		Contas novaConta = contaService.cadastrar(nConta);
+		//registroTransacaoService.registrar(novaConta.getId(), clienteInput.getContas().getTipoMovimentacao(),clienteInput.getContas().getSaldo());
+		
+		return clienteSalvo;
+		
+		
 		
 		/*public ContaOutput cadastrar (@RequestBody ContaInput contaInput) {
 		
