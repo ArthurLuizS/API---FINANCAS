@@ -82,9 +82,13 @@ public class ClienteController {
 		nConta.setSaldo(clienteInput.getContas().getSaldo());
 		List<Transacoes> transacao = nConta.getTransacoes();
 		
-		nConta.efetuarTransacao(clienteInput.getContas().getTipoMovimentacao(), clienteInput.getContas().getSaldo(), null, 1);
+		
+		//nConta.efetuarTransacao(clienteInput.getContas().getTipoMovimentacao(), clienteInput.getContas().getSaldo(), clienteInput.getContas().getSaldo(), 1);
+		
+		
 		Contas novaConta = contaService.cadastrar(nConta);
-		//registroTransacaoService.registrar(novaConta.getId(), clienteInput.getContas().getTipoMovimentacao(),clienteInput.getContas().getSaldo());
+		registroTransacaoService.registrar(novaConta.getId(), "credito", 0F);
+		
 		
 		return clienteSalvo;
 		
