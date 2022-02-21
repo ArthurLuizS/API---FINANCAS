@@ -3,9 +3,10 @@ package com.Projeto1.SFinanceiro.domain.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.stereotype.Service;
 
-import com.Projeto1.SFinanceiro.domain.model.Cliente;
 import com.Projeto1.SFinanceiro.domain.model.Contas;
 import com.Projeto1.SFinanceiro.domain.model.Endereco;
 import com.Projeto1.SFinanceiro.domain.model.Relatorio;
@@ -15,6 +16,7 @@ import com.Projeto1.SFinanceiro.domain.model.RelatorioSaldo;
 import com.Projeto1.SFinanceiro.domain.model.Transacoes;
 import com.Projeto1.SFinanceiro.domain.repository.ClienteRepository;
 import com.Projeto1.SFinanceiro.domain.repository.ContasRepository;
+import com.Projeto1.SFinanceiro.domain.repository.RelatorioRepository;
 
 import lombok.AllArgsConstructor;
 
@@ -24,11 +26,17 @@ public class RelatorioService {
 	private BuscaContaService buscacontaService;
 	private ClienteRepository clienteRepository;
 	private ContasRepository contasRepository;
+	private RelatorioRepository relatorioRepository;
+	private ContasService contaService;
+	
+	@Transactional
 	public Relatorio relatorioIndividual(Long contaId) {
+		Float valortaxa = 10F;
+		Relatorio r = new Relatorio();
 		
 		Contas conta = buscacontaService.buscar(contaId);
 		Float[] taxas = {(float) 1, (float) 0.75, (float) 0.5};
-		Relatorio r = new Relatorio();
+		
 		Endereco e = conta.getCliente().getEndereco();
 		//---------
 		List<Transacoes> transacoesd = new ArrayList<>();
@@ -39,6 +47,8 @@ public class RelatorioService {
 		r.setMovimentacaoCredito(transacoesc.size());
 		//---------
 		//sets manuais
+		r.setCliente_Id(conta.getCliente().getId());
+		r.setValor(r.getValor());
 		r.setMovimentacoes(conta.getTransacoes().size());
 	
 		//r.setMovimentacaoDebito(conta.getTransacoes().);
@@ -48,18 +58,29 @@ public class RelatorioService {
 		
 		r.setSaldoInicial(conta.getTransacoes().get(0).getSaldo_inicial());
 		r.setSaldoAtual(conta.getSaldo());
+		 
+		r.setValor(conta.getTaxas());
 		
+		/*
 		
-		//
-		if(r.getMovimentacoes() <= 10) {
-			r.setValorTransacoes(r.getMovimentacoes() * taxas[0]);
-		}else if(r.getMovimentacoes() > 10 && r.getMovimentacoes() <= 20) {
-			r.setValorTransacoes(r.getMovimentacoes() * taxas[1]);
+		if(r.getMovimentacoes() <= 5) {
+			r.setValor(conta.getTaxas() + taxas[0]);
+		
+		}else if(r.getMovimentacoes() > 5 && r.getMovimentacoes() <= 10) {
+			r.setValor(conta.getTaxas() + taxas[1]);
+			
+			
 		}else if (r.getMovimentacoes() > 20) {
-			r.setValorTransacoes(r.getMovimentacoes() * taxas[2]);
+			r.setValor(conta.getTaxas() + taxas[2]);
+			conta.setTaxas(r.getValor());
 		} else {
 			throw new Error("Nenhuma transação nesta conta");
 		}
+	
+		*/
+		
+		//conta = contaService.cadastrar(conta);
+	
 		//boolean relatorio = conta.getTransacoes().contains("cr");	
 		// pegar a conta / contar as transacoes da conta e retornar
 		/*
@@ -77,7 +98,7 @@ public class RelatorioService {
 		 * 
 		 * fazer o calculo de descnto por cada movimentação
 		 * */
-		return r  ;
+		return relatorioRepository.save(r)  ;
 	}
 
 	public RelatorioPeriodo relatorioPeriodo(Long contaId, String dataInicio, 
