@@ -1,6 +1,5 @@
 package com.Projeto1.SFinanceiro.domain.model;
 
-import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -45,6 +44,11 @@ public class Contas {
 	
 	private Float saldo;
 
+	
+	private Float taxas;
+	
+	
+	
 
 	public Transacoes efetuarTransacao(String tipoMovimentacao, Float valor, Float avalor, Integer tipo) {
 		Transacoes transacao = new Transacoes(); 
