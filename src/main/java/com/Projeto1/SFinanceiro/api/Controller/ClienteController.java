@@ -80,6 +80,7 @@ public class ClienteController {
 		nConta.setCliente(clienteSalvo);
 		nConta.setNumeroConta(clienteInput.getContas().getNumeroConta());
 		nConta.setSaldo(clienteInput.getContas().getSaldo());
+		nConta.setTaxas(0F);
 		List<Transacoes> transacao = nConta.getTransacoes();
 		
 		
