@@ -2,6 +2,7 @@ package com.Projeto1.SFinanceiro.domain.model;
 
 import java.time.OffsetDateTime;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -15,17 +16,24 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@EqualsAndHashCode
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Relatorio {
 	@Id
 	@EqualsAndHashCode.Include
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
+	@Transient
 	private String cliente;
+	
+	private Long cliente_Id;
+	
+	@Transient
 	private String endereco;
 	private Integer movimentacoes;
-	private Float valorTransacoes;
+	
+	
+	private Float valor;
+	
 	@Transient
 	private OffsetDateTime data_cliente;
 	@Transient

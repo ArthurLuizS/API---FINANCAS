@@ -34,6 +34,19 @@ public class RegistroTransacaoService {
 			}
 			
 			conta.setSaldo(nvalor);
+			
+			Float[] taxas = {(float) 1, (float) 0.75, (float) 0.5};
+			if(conta.getTransacoes().size() <= 9) {
+				conta.setTaxas(conta.getTaxas() + taxas[0]);
+			
+			}else if(conta.getTransacoes().size() > 9 && conta.getTransacoes().size() <= 19) {
+				conta.setTaxas(conta.getTaxas() + taxas[1]);
+				
+				
+			}else if (conta.getTransacoes().size() > 19) {
+				conta.setTaxas(conta.getTaxas() + taxas[2]);
+				
+			}
 		
 		 return conta.efetuarTransacao(tipoMovimentacao, valor, avalor, tipo);
 	}
