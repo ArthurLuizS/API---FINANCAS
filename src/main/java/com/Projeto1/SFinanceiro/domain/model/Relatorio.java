@@ -32,16 +32,21 @@ public class Relatorio {
 	private Integer movimentacoes;
 	
 	
-	private Float valor;
+	private Float valor = 0F;
+	
+	@Transient
+	private Float taxacliente;
 	
 	@Transient
 	private OffsetDateTime data_cliente;
 	@Transient
 	private Float saldoInicial;
 	@Transient
-	private Float saldoAtual;
+	private Float saldoAtual = 0F;
 	@Transient
-	private Integer MovimentacaoDebito;
+	private Integer MovimentacaoDebito = 0;
 	@Transient
-	private Integer MovimentacaoCredito;
+	private Integer MovimentacaoCredito = 0;
+	@Transient
+	private Integer quantidadeContas;
 }

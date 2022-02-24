@@ -2,11 +2,13 @@ package com.Projeto1.SFinanceiro.domain.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
+import com.Projeto1.SFinanceiro.domain.model.Cliente;
 import com.Projeto1.SFinanceiro.domain.model.Contas;
 import com.Projeto1.SFinanceiro.domain.model.Endereco;
 import com.Projeto1.SFinanceiro.domain.model.Relatorio;
@@ -30,11 +32,53 @@ public class RelatorioService {
 	private ContasService contaService;
 	
 	@Transactional
-	public Relatorio relatorioIndividual(Long contaId) {
+	public Relatorio relatorioIndividual(Long clienteId) {
 		Float valortaxa = 10F;
 		Relatorio r = new Relatorio();
+		Integer n = 0;
+		Optional<Cliente> cliente = clienteRepository.findById(clienteId);
+		cliente.get().getConta().forEach(conta -> {
+			Endereco e = conta.getCliente().getEndereco();
+			//---------
+			List<Transacoes> transacoesd = new ArrayList<>();
+			List<Transacoes> transacoesc = new ArrayList<>();
+			transacoesd = conta.getTransacoes().stream().filter(t -> t.getTipo() == 1).toList();
+			transacoesc = conta.getTransacoes().stream().filter(t -> t.getTipo() == 2).toList();
+			r.setMovimentacaoDebito(transacoesd.size() + r.getMovimentacaoDebito());
+			r.setMovimentacaoCredito(transacoesc.size()+ r.getMovimentacaoCredito() );
+			//---------
+			//sets manuais
+			r.setCliente_Id(conta.getCliente().getId());
+			r.setValor(r.getValor());
+			
+			//r.setMovimentacoes(conta.getTransacoes().size() + r.getMovimentacoes());
 		
-		Contas conta = buscacontaService.buscar(contaId);
+			//r.setMovimentacaoDebito(conta.getTransacoes().);
+			r.setCliente(conta.getCliente().getNome());
+			r.setEndereco(e.getCidade().concat(" , ").concat(e.getBairro().concat(e.getLogradouro()) ));
+			r.setData_cliente(conta.getCliente().getData_cliente());
+			
+			//r.setSaldoInicial(conta.getTransacoes().get(0).getSaldo_inicial());
+			r.setSaldoAtual(conta.getSaldo()+r.getSaldoAtual());
+			 
+			r.setValor(conta.getTaxas()+ r.getValor());
+			
+		
+			
+			
+			
+			
+			
+			
+		});
+		
+		r.setTaxacliente(cliente.get().getTaxa());
+		r.setSaldoInicial(cliente.get().getConta().get(0).getTransacoes().get(0).getSaldo_inicial());
+		//r.setSaldoInicial(conta.getTransacoes().get(0).getSaldo_inicial());
+		r.setQuantidadeContas(cliente.get().getConta().size());
+		/*
+		
+		//Contas conta = buscacontaService.buscar(contaId);
 		Float[] taxas = {(float) 1, (float) 0.75, (float) 0.5};
 		
 		Endereco e = conta.getCliente().getEndereco();
@@ -97,8 +141,13 @@ public class RelatorioService {
 		 * receber o id do cliente e retornar TODAS as movimentações junto com os dados do cliente
 		 * 
 		 * fazer o calculo de descnto por cada movimentação
+		 * 
+		 * 
 		 * */
-		return relatorioRepository.save(r)  ;
+		
+		r.setMovimentacoes(r.getMovimentacaoCredito() + r.getMovimentacaoDebito());
+		
+		return r  ;
 	}
 
 	public RelatorioPeriodo relatorioPeriodo(Long contaId, String dataInicio, 

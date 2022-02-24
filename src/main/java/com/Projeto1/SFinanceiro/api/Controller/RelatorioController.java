@@ -24,10 +24,10 @@ public class RelatorioController {
 	
 private RelatorioService relatorioService;
 	
-	@GetMapping("/{contaId}")
-	public Relatorio listar(@PathVariable Long contaId) {
+	@GetMapping("/{clienteId}")
+	public Relatorio listar(@PathVariable Long clienteId) {
 		
-		return relatorioService.relatorioIndividual(contaId);
+		return relatorioService.relatorioIndividual(clienteId);
 	}
 	
 	@GetMapping("{contaId}/p")
