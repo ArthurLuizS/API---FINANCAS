@@ -21,6 +21,7 @@ import com.Projeto1.SFinanceiro.domain.model.Cliente;
 import com.Projeto1.SFinanceiro.domain.model.Contas;
 import com.Projeto1.SFinanceiro.domain.repository.ContasRepository;
 import com.Projeto1.SFinanceiro.domain.service.ContasService;
+import com.Projeto1.SFinanceiro.domain.service.RegistroTransacaoService;
 
 import lombok.AllArgsConstructor;
 
@@ -31,13 +32,16 @@ public class ContaController {
 	private ContasRepository contasRepository;
 	private ContasService contaService;
 	private ContaAssembler contaAssembler;
+	private RegistroTransacaoService registroTransacaoService;
 	
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public ContaOutput cadastrar (@RequestBody ContaInput contaInput) {
 		
 		Contas nConta = contaAssembler.toEntity(contaInput);
+		nConta.setTaxas(0F);
 		Contas novaConta = contaService.cadastrar(nConta);
+		registroTransacaoService.registrar(novaConta.getId(), "credito", 0F);
 		
 		return contaAssembler.toModel(novaConta);
 	}
