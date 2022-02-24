@@ -2,10 +2,13 @@ package com.Projeto1.SFinanceiro.domain.service;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.List;
+import java.util.stream.Stream;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.Projeto1.SFinanceiro.domain.model.Cliente;
 import com.Projeto1.SFinanceiro.domain.model.Contas;
 import com.Projeto1.SFinanceiro.domain.model.Transacoes;
 
@@ -20,6 +23,14 @@ public class RegistroTransacaoService {
 	@Transactional
 	public Transacoes registrar(Long contaId, String tipoMovimentacao, Float valor) {
 			Contas conta = buscaContaService.buscar(contaId);
+			Cliente cliente = conta.getCliente();
+			List<Stream<Transacoes>> trans = cliente.getConta().stream().map(c-> c.getTransacoes()
+					.stream().filter(t -> t.getTipo() == 1 || t.getTipo()==2 )).toList();
+			
+			//transacoesd = conta.getTransacoes().stream().filter(t -> t.getTipo() == 1).toList();
+			
+		
+		
 			Integer tipo = null;
 			Float avalor = conta.getSaldo();
 			Float nvalor = null;
@@ -36,16 +47,17 @@ public class RegistroTransacaoService {
 			conta.setSaldo(nvalor);
 			
 			Float[] taxas = {(float) 1, (float) 0.75, (float) 0.5};
-			if(conta.getTransacoes().size() <= 9) {
+			if( conta.getTransacoes().size() <= 3 || trans.size() < 3 ) {
 				conta.setTaxas(conta.getTaxas() + taxas[0]);
+				cliente.setTaxa(cliente.getTaxa() + taxas[0]);
 			
-			}else if(conta.getTransacoes().size() > 9 && conta.getTransacoes().size() <= 19) {
+			}else if(conta.getTransacoes().size() > 3 && conta.getTransacoes().size() <= 19) {
 				conta.setTaxas(conta.getTaxas() + taxas[1]);
-				
+				cliente.setTaxa(cliente.getTaxa() + taxas[1]);
 				
 			}else if (conta.getTransacoes().size() > 19) {
 				conta.setTaxas(conta.getTaxas() + taxas[2]);
-				
+				cliente.setTaxa(conta.getTaxas() + taxas[2]);
 			}
 		
 		 return conta.efetuarTransacao(tipoMovimentacao, valor, avalor, tipo);
