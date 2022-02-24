@@ -52,6 +52,8 @@ public class Cliente {
 	@Transient
 	private Relatorio relatorio;
 	
+	private Float taxa = 0F; 
+	
 	public Contas cadastrarContas(String numeroConta /*, String tipoMovimentacao, BigDecimal valor*/) {
 		Contas contas = new Contas(); 
 		/*contas.setTipoMovimentacao(tipoMovimentacao);
