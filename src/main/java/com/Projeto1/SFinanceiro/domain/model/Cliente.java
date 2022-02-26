@@ -54,6 +54,9 @@ public class Cliente {
 	
 	private Float taxa = 0F; 
 	
+	@Transient
+	private Integer transQtd = 0;
+	
 	public Contas cadastrarContas(String numeroConta /*, String tipoMovimentacao, BigDecimal valor*/) {
 		Contas contas = new Contas(); 
 		/*contas.setTipoMovimentacao(tipoMovimentacao);
