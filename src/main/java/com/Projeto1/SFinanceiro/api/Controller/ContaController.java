@@ -40,7 +40,9 @@ public class ContaController {
 		
 		Contas nConta = contaAssembler.toEntity(contaInput);
 		nConta.setTaxas(0F);
+		
 		Contas novaConta = contaService.cadastrar(nConta);
+		novaConta.getCliente().setTransQtd(novaConta.getCliente().getTransQtd() + 1);
 		registroTransacaoService.registrar(novaConta.getId(), "credito", 0F);
 		
 		return contaAssembler.toModel(novaConta);
