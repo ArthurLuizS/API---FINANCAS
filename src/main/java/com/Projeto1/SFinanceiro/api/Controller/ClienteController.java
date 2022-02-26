@@ -73,7 +73,7 @@ public class ClienteController {
 		//Cliente novoCliente = crudCliente.salvar(nCliente);
 		/*cliente.cadastrarContas(conta.getNumeroConta());*/
 		
-		
+		nCliente.setTaxa(0F);
 		Cliente clienteSalvo = crudCliente.salvar(nCliente/* conta, transacao*/);
 
 		Contas nConta  = contaAssembler.toEntity(contaInput); 
