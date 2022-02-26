@@ -33,9 +33,9 @@ public class RelatorioService {
 	
 	@Transactional
 	public Relatorio relatorioIndividual(Long clienteId) {
-		Float valortaxa = 10F;
 		Relatorio r = new Relatorio();
 		Integer n = 0;
+		
 		Optional<Cliente> cliente = clienteRepository.findById(clienteId);
 		cliente.get().getConta().forEach(conta -> {
 			Endereco e = conta.getCliente().getEndereco();
@@ -73,6 +73,7 @@ public class RelatorioService {
 		});
 		
 		r.setTaxacliente(cliente.get().getTaxa());
+		//r.setTranss(cliente.get());		
 		r.setSaldoInicial(cliente.get().getConta().get(0).getTransacoes().get(0).getSaldo_inicial());
 		//r.setSaldoInicial(conta.getTransacoes().get(0).getSaldo_inicial());
 		r.setQuantidadeContas(cliente.get().getConta().size());

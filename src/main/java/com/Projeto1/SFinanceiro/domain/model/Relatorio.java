@@ -38,6 +38,9 @@ public class Relatorio {
 	private Float taxacliente;
 	
 	@Transient
+	private Long transs = 0L;
+	
+	@Transient
 	private OffsetDateTime data_cliente;
 	@Transient
 	private Float saldoInicial;
