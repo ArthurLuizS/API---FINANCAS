@@ -34,7 +34,7 @@ public class RelatorioService {
 	@Transactional
 	public Relatorio relatorioIndividual(Long clienteId) {
 		Relatorio r = new Relatorio();
-		Integer n = 0;
+		
 		
 		Optional<Cliente> cliente = clienteRepository.findById(clienteId);
 		cliente.get().getConta().forEach(conta -> {
@@ -49,7 +49,7 @@ public class RelatorioService {
 			//---------
 			//sets manuais
 			r.setCliente_Id(conta.getCliente().getId());
-			r.setValor(r.getValor());
+			//r.setValor(r.getValor());
 			
 			//r.setMovimentacoes(conta.getTransacoes().size() + r.getMovimentacoes());
 		
@@ -61,7 +61,7 @@ public class RelatorioService {
 			//r.setSaldoInicial(conta.getTransacoes().get(0).getSaldo_inicial());
 			r.setSaldoAtual(conta.getSaldo()+r.getSaldoAtual());
 			 
-			r.setValor(conta.getTaxas()+ r.getValor());
+			//r.setValor(conta.getTaxas() + r.getValor());
 			
 		
 			
@@ -69,10 +69,10 @@ public class RelatorioService {
 			
 			
 			
+			r.setTaxaCliente(conta.getTaxas() + r.getTaxaCliente());
 			
 		});
 		
-		r.setTaxacliente(cliente.get().getTaxa());
 		//r.setTranss(cliente.get());		
 		r.setSaldoInicial(cliente.get().getConta().get(0).getTransacoes().get(0).getSaldo_inicial());
 		//r.setSaldoInicial(conta.getTransacoes().get(0).getSaldo_inicial());
