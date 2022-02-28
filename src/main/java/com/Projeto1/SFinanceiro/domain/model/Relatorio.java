@@ -31,14 +31,13 @@ public class Relatorio {
 	private String endereco;
 	private Integer movimentacoes;
 	
+	@Column(name = "valor")
+	private Float taxaCliente = 0F;
 	
-	private Float valor = 0F;
+	//@Transient
+	//private Float taxacliente = 0F;
 	
-	@Transient
-	private Float taxacliente;
 	
-	@Transient
-	private Long transs = 0L;
 	
 	@Transient
 	private OffsetDateTime data_cliente;
