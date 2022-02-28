@@ -28,9 +28,7 @@ public class RegistroTransacaoService {
 			Contas conta = buscaContaService.buscar(contaId);
 			Cliente cliente = conta.getCliente();
 			
-		     
 
-		
 	
 			Integer tipo = null;
 			Float avalor = conta.getSaldo();
@@ -55,20 +53,20 @@ public class RegistroTransacaoService {
 				cliente.setTransQtd(cliente.getTransQtd() + c.getTransacoes().size());
 				
 			});
-	
-	if(cliente.getTransQtd() <= 3 ) {
-		conta.setTaxas(conta.getTaxas() + taxas[0]);
-		cliente.setTaxa(cliente.getTaxa() + taxas[0]);
-		
-		
-	}else if(cliente.getTransQtd() > 3 && cliente.getTransQtd()<=4) {
-		conta.setTaxas(conta.getTaxas() + taxas[1]);
-		cliente.setTaxa(cliente.getTaxa() + taxas[1]);
-		
-	}else if (cliente.getTransQtd() > 4) {
-		conta.setTaxas(conta.getTaxas() + taxas[2]);
-		cliente.setTaxa(cliente.getTaxa() + taxas[2]);
-	}
+			
+			if(cliente.getTransQtd() <= 9 ) {
+				conta.setTaxas(conta.getTaxas() + taxas[0]);
+				cliente.setTaxa(cliente.getTaxa() + taxas[0]);
+				
+				
+			}else if(cliente.getTransQtd() > 9 && cliente.getTransQtd()<=19) {
+				conta.setTaxas(conta.getTaxas() + taxas[1]);
+				cliente.setTaxa(cliente.getTaxa() + taxas[1]);
+				
+			}else if (cliente.getTransQtd() > 19) {
+				conta.setTaxas(conta.getTaxas() + taxas[2]);
+				cliente.setTaxa(cliente.getTaxa() + taxas[2]);
+			}
 			
 			
 		
