@@ -58,7 +58,6 @@ public class RegistroTransacaoService {
 				conta.setTaxas(conta.getTaxas() + taxas[0]);
 				cliente.setTaxa(cliente.getTaxa() + taxas[0]);
 				
-				
 			}else if(cliente.getTransQtd() > 9 && cliente.getTransQtd()<=19) {
 				conta.setTaxas(conta.getTaxas() + taxas[1]);
 				cliente.setTaxa(cliente.getTaxa() + taxas[1]);
@@ -67,8 +66,6 @@ public class RegistroTransacaoService {
 				conta.setTaxas(conta.getTaxas() + taxas[2]);
 				cliente.setTaxa(cliente.getTaxa() + taxas[2]);
 			}
-			
-			
 		
 		 return conta.efetuarTransacao(tipoMovimentacao, valor, avalor, tipo);
 	}
