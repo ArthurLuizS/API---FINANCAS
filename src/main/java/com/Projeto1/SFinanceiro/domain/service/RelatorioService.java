@@ -1,6 +1,8 @@
 package com.Projeto1.SFinanceiro.domain.service;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,6 +32,7 @@ public class RelatorioService {
 	private ContasRepository contasRepository;
 	private RelatorioRepository relatorioRepository;
 	private ContasService contaService;
+	private CrudCliente crudCliente;
 	
 	@Transactional
 	public Relatorio relatorioIndividual(Long clienteId) {
@@ -157,8 +160,28 @@ public class RelatorioService {
 		return null;
 	}
 
-	public RelatorioSaldo relatorioSaldo() {
+	public List<Object> relatorioSaldo() {
 		
-		return null;
+		long x = 1L;
+		List<Object> relatorio = new ArrayList<>();
+
+		while(x  <= clienteRepository.count()) {
+			RelatorioSaldo relatorioSaldo = new RelatorioSaldo();
+		 
+			relatorioSaldo.setCliente(crudCliente.buscar(x).getNome());
+			relatorioSaldo.setDataCliente(clienteRepository.getById(x).getData_cliente());
+			relatorioSaldo.setDataSaldo(OffsetDateTime.now());
+			
+			Cliente cliente = clienteRepository.getById(x);
+			 cliente.getConta().forEach(conta -> {
+				relatorioSaldo.setSaldo(conta.getSaldo() + relatorioSaldo.getSaldo());
+			});
+			
+			relatorio.add(relatorioSaldo);
+			x = x + 1L;		
+		}
+		
+		return relatorio;
+		
 	}
 }
