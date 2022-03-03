@@ -29,7 +29,7 @@ public class Relatorio {
 	
 	@Transient
 	private String endereco;
-	private Integer movimentacoes;
+	private Integer movimentacoes = 0;
 	
 	@Column(name = "valor")
 	private Float taxaCliente = 0F;

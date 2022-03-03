@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.Projeto1.SFinanceiro.domain.model.Relatorio;
 import com.Projeto1.SFinanceiro.domain.model.RelatorioPeriodo;
+import com.Projeto1.SFinanceiro.domain.model.RelatorioPeriodoClientes;
 import com.Projeto1.SFinanceiro.domain.model.RelatorioSaldo;
 import com.Projeto1.SFinanceiro.domain.service.RelatorioService;
 
@@ -31,17 +32,24 @@ private RelatorioService relatorioService;
 		return relatorioService.relatorioIndividual(clienteId);
 	}
 	
-	@GetMapping("{contaId}/p")
-	public RelatorioPeriodo listarPeriodo(@PathVariable Long contaId,
+	@GetMapping("{clienteId}/p")
+	public RelatorioPeriodo listarPeriodo(@PathVariable Long clienteId,
 			@RequestBody String dataInicio, String dataFim) {
 		
-		return relatorioService.relatorioPeriodo(contaId, dataInicio, dataFim);
+		return relatorioService.relatorioPeriodo(clienteId, dataInicio, dataFim);
 	}
 	
 	@GetMapping
 	public List<Object> listarTodos() {
 		
 		return relatorioService.relatorioSaldo();
+		
+	}
+	@GetMapping("r")
+	public List<Object> receitaPeriodo() {
+		
+		
+		return relatorioService.RPReceita();
 		
 	}
 }
