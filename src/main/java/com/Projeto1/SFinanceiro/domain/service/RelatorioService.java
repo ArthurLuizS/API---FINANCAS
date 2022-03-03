@@ -15,6 +15,7 @@ import com.Projeto1.SFinanceiro.domain.model.Contas;
 import com.Projeto1.SFinanceiro.domain.model.Endereco;
 import com.Projeto1.SFinanceiro.domain.model.Relatorio;
 import com.Projeto1.SFinanceiro.domain.model.RelatorioPeriodo;
+import com.Projeto1.SFinanceiro.domain.model.RelatorioPeriodoClientes;
 import com.Projeto1.SFinanceiro.domain.model.RelatorioSaldo;
 //import com.Projeto1.SFinanceiro.domain.model.Relatorio;
 import com.Projeto1.SFinanceiro.domain.model.Transacoes;
@@ -66,10 +67,6 @@ public class RelatorioService {
 			 
 			//r.setValor(conta.getTaxas() + r.getValor());
 			
-		
-			
-			
-			
 			
 			
 			r.setTaxaCliente(conta.getTaxas() + r.getTaxaCliente());
@@ -82,62 +79,7 @@ public class RelatorioService {
 		r.setQuantidadeContas(cliente.get().getConta().size());
 		/*
 		
-		//Contas conta = buscacontaService.buscar(contaId);
-		Float[] taxas = {(float) 1, (float) 0.75, (float) 0.5};
 		
-		Endereco e = conta.getCliente().getEndereco();
-		//---------
-		List<Transacoes> transacoesd = new ArrayList<>();
-		List<Transacoes> transacoesc = new ArrayList<>();
-		transacoesd = conta.getTransacoes().stream().filter(t -> t.getTipo() == 1).toList();
-		transacoesc = conta.getTransacoes().stream().filter(t -> t.getTipo() == 2).toList();
-		r.setMovimentacaoDebito(transacoesd.size());
-		r.setMovimentacaoCredito(transacoesc.size());
-		//---------
-		//sets manuais
-		r.setCliente_Id(conta.getCliente().getId());
-		r.setValor(r.getValor());
-		r.setMovimentacoes(conta.getTransacoes().size());
-	
-		//r.setMovimentacaoDebito(conta.getTransacoes().);
-		r.setCliente(conta.getCliente().getNome());
-		r.setEndereco(e.getCidade().concat(" , ").concat(e.getBairro().concat(e.getLogradouro()) ));
-		r.setData_cliente(conta.getCliente().getData_cliente());
-		
-		r.setSaldoInicial(conta.getTransacoes().get(0).getSaldo_inicial());
-		r.setSaldoAtual(conta.getSaldo());
-		 
-		r.setValor(conta.getTaxas());
-		
-		/*
-		
-		if(r.getMovimentacoes() <= 5) {
-			r.setValor(conta.getTaxas() + taxas[0]);
-		
-		}else if(r.getMovimentacoes() > 5 && r.getMovimentacoes() <= 10) {
-			r.setValor(conta.getTaxas() + taxas[1]);
-			
-			
-		}else if (r.getMovimentacoes() > 20) {
-			r.setValor(conta.getTaxas() + taxas[2]);
-			conta.setTaxas(r.getValor());
-		} else {
-			throw new Error("Nenhuma transação nesta conta");
-		}
-	
-		*/
-		
-		//conta = contaService.cadastrar(conta);
-	
-		//boolean relatorio = conta.getTransacoes().contains("cr");	
-		// pegar a conta / contar as transacoes da conta e retornar
-		/*
-		 * 
-		 * if(tipoMovimentacao.contains("de") || tipoMovimentacao.contains("De") ) {
-				nvalor = avalor - valor;
-			}else if(tipoMovimentacao.contains("cr") || tipoMovimentacao.contains("Cr")) {
-				nvalor = avalor + valor;
-			}
 		 * 
 		 * fazer com que retorne um valor de acordo com a quantidade de transaçoes
 		 * por periodo de 30 dias
@@ -159,9 +101,33 @@ public class RelatorioService {
 			
 		return null;
 	}
+	
+	public List<Object> RPReceita() {
+		List<Object> relatorio = new ArrayList<>();
+			long x = 1L;
+			
+			while(x  <= clienteRepository.count()) {
+				RelatorioPeriodoClientes rpc = new RelatorioPeriodoClientes();
+				rpc.setCliente(crudCliente.buscar(x).getNome());
+				
+				Cliente cliente = clienteRepository.getById(x);
+				 cliente.getConta().forEach(conta -> {
+					rpc.setMovimentacoes(conta.getTransacoes().size() + rpc.getMovimentacoes());
+				
+				 });
+				 rpc.setIdentificador(cliente.getIdentificador());
+				 rpc.setTaxas(cliente.getTaxa());
+				 x = x + 1L;
+				 relatorio.add(rpc);
+			}
+			
+			
+			
+		return relatorio;
+	}
+	
 
 	public List<Object> relatorioSaldo() {
-		
 		long x = 1L;
 		List<Object> relatorio = new ArrayList<>();
 
