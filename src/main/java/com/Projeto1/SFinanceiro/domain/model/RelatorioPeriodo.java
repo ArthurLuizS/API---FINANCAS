@@ -8,6 +8,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class RelatorioPeriodo  extends Relatorio{
-	private Date dataInicio;
+	private Date dataIn;
 	private Date dataFim;
 }
