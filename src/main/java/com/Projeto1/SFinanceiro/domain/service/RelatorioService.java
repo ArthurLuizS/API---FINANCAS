@@ -3,8 +3,10 @@ package com.Projeto1.SFinanceiro.domain.service;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.TimeZone;
 
 import javax.transaction.Transactional;
 
@@ -102,23 +104,36 @@ public class RelatorioService {
 		return null;
 	}
 	
-	public List<Object> RPReceita() {
+	public List<Object> RPReceita(OffsetDateTime inicio /*, OffsetDateTime fim */) {
 		List<Object> relatorio = new ArrayList<>();
+		
+		//--- Testando se a condico está sendo feita por data
+		Cliente cliente2 = crudCliente.buscar(24L);
+		OffsetDateTime inicio1 = cliente2.getData_cliente();
+		OffsetDateTime fim = OffsetDateTime.now();
+		//------------------------
+		
 			long x = 1L;
-			
 			while(x  <= clienteRepository.count()) {
-				RelatorioPeriodoClientes rpc = new RelatorioPeriodoClientes();
-				rpc.setCliente(crudCliente.buscar(x).getNome());
+			
 				
-				Cliente cliente = clienteRepository.getById(x);
-				 cliente.getConta().forEach(conta -> {
-					rpc.setMovimentacoes(conta.getTransacoes().size() + rpc.getMovimentacoes());
-				
-				 });
-				 rpc.setIdentificador(cliente.getIdentificador());
-				 rpc.setTaxas(cliente.getTaxa());
-				 x = x + 1L;
-				 relatorio.add(rpc);
+				Cliente cliente1 = crudCliente.buscar(x);
+				if(cliente1.getData_cliente().isBefore(fim) && cliente1.getData_cliente().isAfter(inicio) ) {
+					
+					RelatorioPeriodoClientes rpc = new RelatorioPeriodoClientes();
+					rpc.setCliente(crudCliente.buscar(x).getNome());
+					
+					Cliente cliente = clienteRepository.getById(x);
+					cliente.getConta().forEach(conta -> {
+						rpc.setMovimentacoes(conta.getTransacoes().size() + rpc.getMovimentacoes());
+						
+					});
+					rpc.setIdentificador(cliente.getIdentificador());
+					rpc.setTaxas(cliente.getTaxa());
+					
+					relatorio.add(rpc);
+				}
+				x = x + 1L;
 			}
 			
 			
