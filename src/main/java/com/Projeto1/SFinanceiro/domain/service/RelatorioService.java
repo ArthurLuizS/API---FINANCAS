@@ -104,15 +104,9 @@ public class RelatorioService {
 		return null;
 	}
 	
-	public List<Object> RPReceita(OffsetDateTime inicio /*, OffsetDateTime fim */) {
+	public List<Object> RPReceita(OffsetDateTime inicio , OffsetDateTime fim ) {
 		List<Object> relatorio = new ArrayList<>();
-		
-		//--- Testando se a condico está sendo feita por data
-		Cliente cliente2 = crudCliente.buscar(24L);
-		OffsetDateTime inicio1 = cliente2.getData_cliente();
-		OffsetDateTime fim = OffsetDateTime.now();
 		//------------------------
-		
 			long x = 1L;
 			while(x  <= clienteRepository.count()) {
 			
