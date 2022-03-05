@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.Projeto1.SFinanceiro.api.Model.input.DataInput;
 import com.Projeto1.SFinanceiro.domain.model.Relatorio;
 import com.Projeto1.SFinanceiro.domain.model.RelatorioPeriodo;
 import com.Projeto1.SFinanceiro.domain.model.RelatorioPeriodoClientes;
@@ -52,16 +53,14 @@ private RelatorioService relatorioService;
 		
 	}
 	@PostMapping
-	public List<Object> receitaPeriodo(@RequestBody String dataIn /*, String dataFim*/) {
-		dataIn.concat("T00:00:00-03:00");
+	public List<Object> receitaPeriodo(@RequestBody DataInput dataInput) {
 		
-		OffsetDateTime inicio = OffsetDateTime.parse(dataIn,
-				DateTimeFormatter.ofPattern("yyyy-MMM-dd HH:mm:ss x"));
+		OffsetDateTime inicio = OffsetDateTime.parse(dataInput.getDataInicio().concat("T00:00:00.246+00:00"));
+		OffsetDateTime fim = OffsetDateTime.parse(dataInput.getDataFim().concat("T23:59:59.246+00:00"));
+	
 		
-		//OffsetDateTime inicio = OffsetDateTime.parse();
-		OffsetDateTime fim = OffsetDateTime.now();
 		
-		return relatorioService.RPReceita(inicio /*, fim*/);
+		return relatorioService.RPReceita(inicio, fim);
 		
 	}
 	
