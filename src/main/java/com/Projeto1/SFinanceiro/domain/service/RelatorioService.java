@@ -104,30 +104,23 @@ public class RelatorioService {
 		return null;
 	}
 	
-	public List<Object> RPReceita(OffsetDateTime inicio , OffsetDateTime fim ) {
-		List<Object> relatorio = new ArrayList<>();
+	public List<RelatorioPeriodoClientes> RPReceita(OffsetDateTime inicio , OffsetDateTime fim ) {
+		List<RelatorioPeriodoClientes> relatorio = new ArrayList<>();
 		//------------------------
-			long x = 1L;
-			while(x  <= clienteRepository.count()) {
-			
+		long x = 1L;
+		while(x  <= clienteRepository.count()) {
+			Cliente cliente1 = crudCliente.buscar(x);
+			if(cliente1.getData_cliente().isBefore(fim) && cliente1.getData_cliente().isAfter(inicio) ) {	
+				RelatorioPeriodoClientes rpc = new RelatorioPeriodoClientes();
+				rpc.setCliente(crudCliente.buscar(x).getNome());
+				Cliente cliente = clienteRepository.getById(x); 
+				rpc.setMovimentacoes(relatorioIndividual(x).getMovimentacoes());
+				rpc.setIdentificador(cliente.getIdentificador());
+				rpc.setTaxas(relatorioIndividual(x).getTaxaCliente());
 				
-				Cliente cliente1 = crudCliente.buscar(x);
-				if(cliente1.getData_cliente().isBefore(fim) && cliente1.getData_cliente().isAfter(inicio) ) {
-					
-					RelatorioPeriodoClientes rpc = new RelatorioPeriodoClientes();
-					rpc.setCliente(crudCliente.buscar(x).getNome());
-					
-					Cliente cliente = clienteRepository.getById(x);
-					cliente.getConta().forEach(conta -> {
-						rpc.setMovimentacoes(conta.getTransacoes().size() + rpc.getMovimentacoes());
-						
-					});
-					rpc.setIdentificador(cliente.getIdentificador());
-					rpc.setTaxas(cliente.getTaxa());
-					
-					relatorio.add(rpc);
-				}
-				x = x + 1L;
+				relatorio.add(rpc);
+			}
+			x = x + 1L;
 			}
 			
 			
