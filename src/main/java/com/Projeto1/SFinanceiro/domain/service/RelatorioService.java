@@ -108,19 +108,35 @@ public class RelatorioService {
 		List<RelatorioPeriodoClientes> relatorio = new ArrayList<>();
 		//------------------------
 		long x = 1L;
+		
 		while(x  <= clienteRepository.count()) {
-			Cliente cliente1 = crudCliente.buscar(x);
-			if(cliente1.getData_cliente().isBefore(fim) && cliente1.getData_cliente().isAfter(inicio) ) {	
+			Integer y = 0;
+			Cliente cliente = crudCliente.buscar(x);
+		
+			if(cliente.getData_cliente().isBefore(fim) ) {
+				
 				RelatorioPeriodoClientes rpc = new RelatorioPeriodoClientes();
-				rpc.setCliente(crudCliente.buscar(x).getNome());
-				Cliente cliente = clienteRepository.getById(x); 
+				rpc.setCliente(crudCliente.buscar(x).getNome()); 
+				//rpc.setCliente(cliente.getNome());
 				rpc.setMovimentacoes(relatorioIndividual(x).getMovimentacoes());
 				rpc.setIdentificador(cliente.getIdentificador());
-				rpc.setTaxas(relatorioIndividual(x).getTaxaCliente());
+				
+				while (y < cliente.getConta().size()) {
+					Contas conta = cliente.getConta().get(y);
+					conta.getTransacoes().forEach( t -> { t.getData();
+							if(t.getData().isAfter(inicio) && t.getData().isBefore(fim)) {
+								cliente.setTransQtd(1 + cliente.getTransQtd());
+								
+							}});
+					y++;
+				};  
+				//rpc.setTaxas(relatorioIndividual(x).getTaxaCliente());
+				rpc.setTaxas(cliente.getTransQtd().floatValue());
 				
 				relatorio.add(rpc);
 			}
-			x = x + 1L;
+			
+			x = x + 1L; 
 			}
 			
 			
