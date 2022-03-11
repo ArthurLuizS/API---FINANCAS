@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.TimeZone;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -24,7 +25,9 @@ import com.Projeto1.SFinanceiro.domain.model.Transacoes;
 import com.Projeto1.SFinanceiro.domain.repository.ClienteRepository;
 import com.Projeto1.SFinanceiro.domain.repository.ContasRepository;
 import com.Projeto1.SFinanceiro.domain.repository.RelatorioRepository;
+import com.Projeto1.SFinanceiro.domain.repository.TransacoesRepository;
 
+import ch.qos.logback.core.filter.Filter;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -36,6 +39,7 @@ public class RelatorioService {
 	private RelatorioRepository relatorioRepository;
 	private ContasService contaService;
 	private CrudCliente crudCliente;
+	private TransacoesRepository transacoesRepository;
 	
 	@Transactional
 	public Relatorio relatorioIndividual(Long clienteId) {
@@ -106,41 +110,63 @@ public class RelatorioService {
 	
 	public List<RelatorioPeriodoClientes> RPReceita(OffsetDateTime inicio , OffsetDateTime fim ) {
 		List<RelatorioPeriodoClientes> relatorio = new ArrayList<>();
+		List<Transacoes> transacoes = new ArrayList<>();
 		//------------------------
-		long x = 1L;
+		List<Contas> contas = new ArrayList<>();
+		Integer x = 0;
+		Long y = 1L;
+		Integer z = 0;
 		
-		while(x  <= clienteRepository.count()) {
-			Integer y = 0;
-			Cliente cliente = crudCliente.buscar(x);
+	while(x < transacoesRepository.count()) {
+/*		Contas conta = contasRepository.getById(y);
+		if(conta.getDataConta().isAfter(inicio)
+				&& conta.getDataConta().isBefore(fim)) {
+			contas.add(conta);
+		}
 		
-			if(cliente.getData_cliente().isBefore(fim) ) {
-				
-				RelatorioPeriodoClientes rpc = new RelatorioPeriodoClientes();
-				rpc.setCliente(crudCliente.buscar(x).getNome()); 
-				//rpc.setCliente(cliente.getNome());
-				rpc.setMovimentacoes(relatorioIndividual(x).getMovimentacoes());
-				rpc.setIdentificador(cliente.getIdentificador());
-				
-				while (y < cliente.getConta().size()) {
-					Contas conta = cliente.getConta().get(y);
-					conta.getTransacoes().forEach( t -> { t.getData();
-							if(t.getData().isAfter(inicio) && t.getData().isBefore(fim)) {
-								cliente.setTransQtd(1 + cliente.getTransQtd());
-								
-							}});
-					y++;
-				};  
-				//rpc.setTaxas(relatorioIndividual(x).getTaxaCliente());
-				rpc.setTaxas(cliente.getTransQtd().floatValue());
-				
-				relatorio.add(rpc);
-			}
+		*/
+		
+		Transacoes transacao = transacoesRepository.getById(y);
+		if (transacao.getData().isAfter(inicio) && transacao.getData().isBefore(fim)) {
+			transacoes.add(transacao);
+		}
+		x++;
+		y++;
+	} 
+	for(Long a = 1L ; a <= clienteRepository.count() ; a++ ) {
+		Cliente cliente = crudCliente.buscar(a);
+		if(transacoes.contains(cliente.getId())) {
+		}
 			
-			x = x + 1L; 
-			}
+			List<Transacoes> resumo = transacoes.stream().filter(t ->
+			t.getConta().getCliente().getId() == cliente.getId())
+			.collect(Collectors.toList());
+	RelatorioPeriodoClientes rpc = new RelatorioPeriodoClientes();
+	rpc.setCliente(cliente.getNome());
+	rpc.setIdentificador(cliente.getIdentificador());
+	rpc.setMovimentacoes(resumo.size());
+	
+	if(rpc.getMovimentacoes() <= 10) {
+		rpc.setTaxas(rpc.getMovimentacoes().floatValue() * 1);
+	}else if(rpc.getMovimentacoes() > 10 && rpc.getMovimentacoes() <= 20 ) {
+		Float sobra = rpc.getMovimentacoes().floatValue() - 10;
+		rpc.setTaxas(10F + sobra * 0.75F);
+	}else {
+		Float sobra = rpc.getMovimentacoes().floatValue() - 20;
+		rpc.setTaxas(20F + sobra * 0.5F );
+	}
+	
+
+	relatorio.add(rpc);
+			
+		
+		
+		
+	}
+
 			
 			
-			
+	//	return transacoes;	
 		return relatorio;
 	}
 	
