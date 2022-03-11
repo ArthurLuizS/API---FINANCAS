@@ -44,8 +44,7 @@ public class RelatorioService {
 	@Transactional
 	public Relatorio relatorioIndividual(Long clienteId) {
 		Relatorio r = new Relatorio();
-		
-		
+			
 		Optional<Cliente> cliente = clienteRepository.findById(clienteId);
 		cliente.get().getConta().forEach(conta -> {
 			Endereco e = conta.getCliente().getEndereco();
@@ -101,30 +100,15 @@ public class RelatorioService {
 		
 		return r  ;
 	}
-
-	public RelatorioPeriodo relatorioPeriodo(Long contaId, String dataInicio, 
-			String dataFim) {
-			
-		return null;
-	}
-	
+	//----------------------------------------------------------//
+	//----------------------------------------------------------//
 	public List<RelatorioPeriodoClientes> RPReceita(OffsetDateTime inicio , OffsetDateTime fim ) {
 		List<RelatorioPeriodoClientes> relatorio = new ArrayList<>();
 		List<Transacoes> transacoes = new ArrayList<>();
-		//------------------------
-		List<Contas> contas = new ArrayList<>();
 		Integer x = 0;
 		Long y = 1L;
-		Integer z = 0;
 		
 	while(x < transacoesRepository.count()) {
-/*		Contas conta = contasRepository.getById(y);
-		if(conta.getDataConta().isAfter(inicio)
-				&& conta.getDataConta().isBefore(fim)) {
-			contas.add(conta);
-		}
-		
-		*/
 		
 		Transacoes transacao = transacoesRepository.getById(y);
 		if (transacao.getData().isAfter(inicio) && transacao.getData().isBefore(fim)) {
@@ -138,39 +122,34 @@ public class RelatorioService {
 		if(transacoes.contains(cliente.getId())) {
 		}
 			
-			List<Transacoes> resumo = transacoes.stream().filter(t ->
-			t.getConta().getCliente().getId() == cliente.getId())
-			.collect(Collectors.toList());
-	RelatorioPeriodoClientes rpc = new RelatorioPeriodoClientes();
-	rpc.setCliente(cliente.getNome());
-	rpc.setIdentificador(cliente.getIdentificador());
-	rpc.setMovimentacoes(resumo.size());
+		List<Transacoes> resumo = transacoes.stream().filter(t ->
+		t.getConta().getCliente().getId() == cliente.getId())
+		.collect(Collectors.toList());
+		RelatorioPeriodoClientes rpc = new RelatorioPeriodoClientes();
+		rpc.setMovimentacaoCredito(resumo.stream().filter(t -> t.getTipo() == 1).collect(Collectors.toList()).size());
+		rpc.setCliente(cliente.getNome());
+		rpc.setIdentificador(cliente.getIdentificador());
+		rpc.setMovimentacoes(resumo.size());
+				
+		if(rpc.getMovimentacoes() <= 10) {
+			rpc.setTaxas(rpc.getMovimentacoes().floatValue() * 1);
+		}else if(rpc.getMovimentacoes() > 10 && rpc.getMovimentacoes() <= 20 ) {
+			Float sobra = rpc.getMovimentacoes().floatValue() - 10;
+			rpc.setTaxas(10F + sobra * 0.75F);
+		}else {
+			Float sobra = rpc.getMovimentacoes().floatValue() - 20;
+			rpc.setTaxas(20F + sobra * 0.5F );
+		}	
+		
+		relatorio.add(rpc);
+		
+		}
 	
-	if(rpc.getMovimentacoes() <= 10) {
-		rpc.setTaxas(rpc.getMovimentacoes().floatValue() * 1);
-	}else if(rpc.getMovimentacoes() > 10 && rpc.getMovimentacoes() <= 20 ) {
-		Float sobra = rpc.getMovimentacoes().floatValue() - 10;
-		rpc.setTaxas(10F + sobra * 0.75F);
-	}else {
-		Float sobra = rpc.getMovimentacoes().floatValue() - 20;
-		rpc.setTaxas(20F + sobra * 0.5F );
-	}
-	
-
-	relatorio.add(rpc);
-			
-		
-		
-		
-	}
-
-			
-			
-	//	return transacoes;	
 		return relatorio;
 	}
 	
-
+	//----------------------------------------------------------//
+	//----------------------------------------------------------//
 	public List<Object> relatorioSaldo() {
 		long x = 1L;
 		List<Object> relatorio = new ArrayList<>();
@@ -193,5 +172,55 @@ public class RelatorioService {
 		
 		return relatorio;
 		
+	}
+	
+	public RelatorioPeriodoClientes relatorioPeriodo(Long clienteId, OffsetDateTime dataInicio, 
+			OffsetDateTime dataFim) {
+			RelatorioPeriodoClientes rpc = new RelatorioPeriodoClientes();
+			Cliente cliente = crudCliente.buscar(clienteId);
+			rpc.setCliente(cliente.getNome());
+			rpc.setData_cliente(cliente.getData_cliente());
+			rpc.setEndereco(relatorioIndividual(clienteId).getEndereco());
+			
+			List<Contas> contas = cliente.getConta().stream().filter(c ->
+			c.getDataConta().isAfter(dataInicio) && c.getDataConta().isBefore(dataFim)).toList();
+			Integer credito = 0;
+			Integer debito = 0;
+			contas.forEach(c -> {
+				List<Transacoes > transf = new ArrayList<>();
+				
+				transf = c.getTransacoes().stream().filter(t -> t.getData().isAfter(dataInicio)
+						&& t.getData().isBefore(dataFim)).toList();
+				rpc.setMovimentacaoCredito(transf.stream().filter(t -> t.getTipo() == 2).collect(Collectors.toList()).size());
+				
+				rpc.setMovimentacaoDebito(transf.stream().filter(t -> t.getTipo() == 1).collect(Collectors.toList()).size());
+/*				rpc.setMovimentacaoCredito(transf.stream().filter(t -> t.getTipo() == 2).collect(Collectors.toList()).size());
+				
+				List<Transacoes> transacoesd = new ArrayList<>();
+				List<Transacoes> transacoesc = new ArrayList<>();
+				transacoesd = c.getTransacoes().stream().filter(t -> t.getTipo() == 1).toList();
+				transacoesc = c.getTransacoes().stream().filter(t -> t.getTipo() == 2).toList();
+				rpc.setMovimentacaoDebito(transacoesd.size() + rpc.getMovimentacaoDebito());
+				rpc.setMovimentacaoCredito(transacoesc.size()+ rpc.getMovimentacaoCredito() );
+*/				
+				/*
+				rpc.setMovimentacaoCredito(rpc.getMovimentacaoCredito() + c.getTransacoes().stream()
+						.filter(t -> t.getTipo() ==2 ).collect(Collectors.toList()).size());  */
+						});
+					
+	//rpc.setMovimentacaoCredito(resumo.stream().filter(t -> t.getTipo() == 1).collect(Collectors.toList()).size());
+					
+	/*		if (transacao.getData().isAfter(inicio) && transacao.getData().isBefore(fim)) {
+				transacoes.add(transacao);
+			}
+			
+			rpc.setMovimentacaoCredito(1); */
+	
+
+	//			rpc.setMovimentacaoDebito(transf.stream().filter(t -> t.getTipo() == 1).collect(Collectors.toList()).size());
+	//			rpc.setMovimentacaoCredito(transf.stream().filter(t -> t.getTipo() == 2).collect(Collectors.toList()).size());
+		
+			
+		return rpc;
 	}
 }
