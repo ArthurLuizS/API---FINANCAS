@@ -48,12 +48,12 @@ private RelatorioService relatorioService;
 	}
 	
 	@PostMapping("{clienteId}/periodo")
-	public RelatorioPeriodo listarPeriodo(@PathVariable Long clienteId,
+	public RelatorioPeriodoClientes listarPeriodo(@PathVariable Long clienteId,
 			@RequestBody DataInput dataInput) {
 		OffsetDateTime inicio = OffsetDateTime.parse(dataInput.getDataInicio().concat("T00:00:00.246+00:00"));
 		OffsetDateTime fim = OffsetDateTime.parse(dataInput.getDataFim().concat("T23:59:59.246+00:00"));
 		
-		return relatorioService.relatorioPeriodo(clienteId);
+		return relatorioService.relatorioPeriodo(clienteId, inicio, fim);
 	}
 	
 	@GetMapping
