@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class RelatorioPeriodoClientes {
+public class RelatorioPeriodoClientes extends Relatorio {
 	
 	private String cliente;
 	private String identificador;
