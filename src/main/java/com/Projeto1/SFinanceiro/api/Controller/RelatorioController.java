@@ -9,6 +9,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.Projeto1.SFinanceiro.api.Assembler.RelatorioAssembler;
 import com.Projeto1.SFinanceiro.api.Model.RelatorioOutput;
 import com.Projeto1.SFinanceiro.api.Model.input.DataInput;
+import com.Projeto1.SFinanceiro.domain.model.Contas;
 import com.Projeto1.SFinanceiro.domain.model.Relatorio;
 import com.Projeto1.SFinanceiro.domain.model.RelatorioPeriodo;
 import com.Projeto1.SFinanceiro.domain.model.RelatorioPeriodoClientes;
@@ -48,12 +50,33 @@ private RelatorioService relatorioService;
 	}
 	
 	@PostMapping("{clienteId}/periodo")
-	public RelatorioPeriodoClientes listarPeriodo(@PathVariable Long clienteId,
+	public List<String> listarPeriodo(@PathVariable Long clienteId,
 			@RequestBody DataInput dataInput) {
 		OffsetDateTime inicio = OffsetDateTime.parse(dataInput.getDataInicio().concat("T00:00:00.246+00:00"));
 		OffsetDateTime fim = OffsetDateTime.parse(dataInput.getDataFim().concat("T23:59:59.246+00:00"));
 		
-		return relatorioService.relatorioPeriodo(clienteId, inicio, fim);
+		
+		RelatorioPeriodoClientes rpc =  relatorioService.relatorioPeriodo(clienteId, inicio, fim);
+		
+		List<String> relatorio = new ArrayList<>();
+		relatorio.add("Periodo: ".concat(dataInput.getDataInicio().concat(" a ")
+				.concat(dataInput.getDataFim())));
+		relatorio.add("Cliente: ".concat(rpc.getCliente()));
+		relatorio.add("Cliente desde: ".concat(rpc.getData_cliente().toString()));
+		relatorio.add("Endereço: ".concat(rpc.getEndereco()));
+		relatorio.add("Movimentacoes de crédito: ".concat(rpc.getMovimentacaoCredito().toString()));
+		relatorio.add("Movimentações de débito: ".concat(rpc.getMovimentacaoDebito().toString()));
+		relatorio.add("Total de movimentações: ".concat(rpc.getMovimentacoes().toString()));
+		relatorio.add("Valor pago pelas movimentações: ".concat(rpc.getTaxas().toString()));
+		relatorio.add("Saldo inicial: ".concat(rpc.getSaldoInicial().toString()));
+		relatorio.add("Saldo atual: ".concat(rpc.getSaldoAtual().toString()));
+
+
+		//relatorio.add(rpc.getClass().toString());
+		
+		
+		
+		return relatorio;
 	}
 	
 	@GetMapping
