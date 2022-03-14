@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.transaction.Transactional;
 
@@ -64,7 +65,7 @@ public class RelatorioService {
 		
 			//r.setMovimentacaoDebito(conta.getTransacoes().);
 			r.setCliente(conta.getCliente().getNome());
-			r.setEndereco(e.getCidade().concat(" , ").concat(e.getBairro().concat(e.getLogradouro()) ));
+			r.setEndereco(e.getCidade().concat(" , ").concat(e.getBairro().concat(" , ").concat(e.getLogradouro()) ));
 			r.setData_cliente(conta.getCliente().getData_cliente());
 			
 			//r.setSaldoInicial(conta.getTransacoes().get(0).getSaldo_inicial());
@@ -184,13 +185,38 @@ public class RelatorioService {
 			
 			List<Contas> contas = cliente.getConta().stream().filter(c ->
 			c.getDataConta().isAfter(dataInicio) && c.getDataConta().isBefore(dataFim)).toList();
-			Integer credito = 0;
+			
+			List<Transacoes> transacoes = new ArrayList<>();
+			
+		contas.forEach(c -> transacoes.addAll(c.getTransacoes()));
+		
+		// FALTA FILTRAR AS TRANSACOES POR DATAS -- NO MOMENTO APENAS AS CONTAS QUE SÃO
+			Long credito = transacoes.stream().filter(t -> t.getTipo() == 2).count();
+			Long debito = transacoes.stream().filter(t -> t.getTipo() == 1).count();
+			rpc.setMovimentacaoCredito(credito.intValue());
+			rpc.setMovimentacaoDebito(debito.intValue());
+			rpc.setMovimentacoes(rpc.getMovimentacaoCredito() + rpc.getMovimentacaoDebito());
+			rpc.setSaldoInicial(transacoes.get(1).getSaldo_inicial());	
+			rpc.setSaldoAtual(relatorioIndividual(cliente.getId()).getSaldoAtual());
+			
+			if(rpc.getMovimentacoes() <= 10) {
+				rpc.setTaxas(rpc.getMovimentacoes().floatValue() * 1);
+			}else if(rpc.getMovimentacoes() > 10 && rpc.getMovimentacoes() <= 20 ) {
+				Float sobra = rpc.getMovimentacoes().floatValue() - 10;
+				rpc.setTaxas(10F + sobra * 0.75F);
+			}else {
+				Float sobra = rpc.getMovimentacoes().floatValue() - 20;
+				rpc.setTaxas(20F + sobra * 0.5F );
+			};
+			
+	/*	Integer credito = 0;
 			Integer debito = 0;
 			contas.forEach(c -> {
 				List<Transacoes > transf = new ArrayList<>();
 				
 				transf = c.getTransacoes().stream().filter(t -> t.getData().isAfter(dataInicio)
 						&& t.getData().isBefore(dataFim)).toList();
+				
 				rpc.setMovimentacaoCredito(transf.stream().filter(t -> t.getTipo() == 2).collect(Collectors.toList()).size());
 				
 				rpc.setMovimentacaoDebito(transf.stream().filter(t -> t.getTipo() == 1).collect(Collectors.toList()).size());
@@ -206,7 +232,7 @@ public class RelatorioService {
 				/*
 				rpc.setMovimentacaoCredito(rpc.getMovimentacaoCredito() + c.getTransacoes().stream()
 						.filter(t -> t.getTipo() ==2 ).collect(Collectors.toList()).size());  */
-						});
+	//					});
 					
 	//rpc.setMovimentacaoCredito(resumo.stream().filter(t -> t.getTipo() == 1).collect(Collectors.toList()).size());
 					
@@ -220,7 +246,7 @@ public class RelatorioService {
 	//			rpc.setMovimentacaoDebito(transf.stream().filter(t -> t.getTipo() == 1).collect(Collectors.toList()).size());
 	//			rpc.setMovimentacaoCredito(transf.stream().filter(t -> t.getTipo() == 2).collect(Collectors.toList()).size());
 		
-			
-		return rpc;
+//	return transacoes;		
+	return  rpc;
 	}
 }
