@@ -151,12 +151,14 @@ public class RelatorioService {
 	
 	//----------------------------------------------------------//
 	//----------------------------------------------------------//
-	public List<Object> relatorioSaldo() {
+	public List<RelatorioSaldo> relatorioSaldo() {
 		long x = 1L;
-		List<Object> relatorio = new ArrayList<>();
+		List<RelatorioSaldo> relatorio = new ArrayList<>();
 
 		while(x  <= clienteRepository.count()) {
 			RelatorioSaldo relatorioSaldo = new RelatorioSaldo();
+			
+		//	relatorio.add(crudCliente.buscar(x));
 		 
 			relatorioSaldo.setCliente(crudCliente.buscar(x).getNome());
 			relatorioSaldo.setDataCliente(clienteRepository.getById(x).getData_cliente());
@@ -167,7 +169,7 @@ public class RelatorioService {
 				relatorioSaldo.setSaldo(conta.getSaldo() + relatorioSaldo.getSaldo());
 			});
 			
-			relatorio.add(relatorioSaldo);
+			relatorio.add(relatorioSaldo); 
 			x = x + 1L;		
 		}
 		
@@ -187,16 +189,26 @@ public class RelatorioService {
 			c.getDataConta().isAfter(dataInicio) && c.getDataConta().isBefore(dataFim)).toList();
 			
 			List<Transacoes> transacoes = new ArrayList<>();
+			List<Transacoes> transacoesFiltradas = new ArrayList<>();
 			
-		contas.forEach(c -> transacoes.addAll(c.getTransacoes()));
+		contas.forEach(c -> 
+		transacoes.addAll(c.getTransacoes()));
+		//------------------------------
+		//PARA TESTAR QUANDO VOLTAR A INTERNET
+		transacoes.forEach(t -> {
+		if(t.getData().isAfter(dataInicio) && t.getData().isBefore(dataFim)){
+			transacoesFiltradas.add(t);	
+		}});
+		//-------------------------------
 		
 		// FALTA FILTRAR AS TRANSACOES POR DATAS -- NO MOMENTO APENAS AS CONTAS QUE SÃO
-			Long credito = transacoes.stream().filter(t -> t.getTipo() == 2).count();
-			Long debito = transacoes.stream().filter(t -> t.getTipo() == 1).count();
+		//ALTERANDO APENAS TRANSACOES PARA TRANSACOESFILTRADAS ->
+			Long credito = transacoesFiltradas.stream().filter(t -> t.getTipo() == 2).count();
+			Long debito = transacoesFiltradas.stream().filter(t -> t.getTipo() == 1).count();
 			rpc.setMovimentacaoCredito(credito.intValue());
 			rpc.setMovimentacaoDebito(debito.intValue());
 			rpc.setMovimentacoes(rpc.getMovimentacaoCredito() + rpc.getMovimentacaoDebito());
-			rpc.setSaldoInicial(transacoes.get(1).getSaldo_inicial());	
+			rpc.setSaldoInicial(transacoesFiltradas.get(1).getSaldo_inicial());	
 			rpc.setSaldoAtual(relatorioIndividual(cliente.getId()).getSaldoAtual());
 			
 			if(rpc.getMovimentacoes() <= 10) {
