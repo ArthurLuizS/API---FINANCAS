@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.Projeto1.SFinanceiro.api.Assembler.RelatorioAssembler;
 import com.Projeto1.SFinanceiro.api.Model.RelatorioOutput;
 import com.Projeto1.SFinanceiro.api.Model.input.DataInput;
+import com.Projeto1.SFinanceiro.domain.model.Cliente;
 import com.Projeto1.SFinanceiro.domain.model.Contas;
 import com.Projeto1.SFinanceiro.domain.model.Relatorio;
 import com.Projeto1.SFinanceiro.domain.model.RelatorioPeriodo;
@@ -40,6 +41,7 @@ public class RelatorioController {
 	
 	RelatorioAssembler relatorioAssembler;
 	ClienteRepository clienteRepository;
+	
 	
 private RelatorioService relatorioService;
 	
@@ -80,9 +82,24 @@ private RelatorioService relatorioService;
 	}
 	
 	@GetMapping
-	public List<Object> listarTodos() {
+	public List<String> listarTodos() {
+	/*	List<String> lista = new ArrayList<>();
+		List<RelatorioSaldo> relatorio = relatorioService.relatorioSaldo();
 		
-		return relatorioService.relatorioSaldo();
+		for(Integer i = 0; i < relatorio.size(); i++) {
+			lista.add("Cliente: ".concat(relatorio.get(i).getCliente())
+					.concat(" - Cliente desde: ").concat(relatorio.get(i).getDataCliente().toString())
+					.concat(" - Saldo em: ").concat(relatorio.get(i).getDataSaldo().toString())
+					.concat(" : ").concat(relatorio.get(i).getSaldo().toString()));
+		}
+		
+		/*Relatório de saldo de todos os clientes;
+			Cliente: X - Cliente desde: DD/MM/YYYY – Saldo em DD/MM/YYYY: 0.000,00
+			Cliente: Y - Cliente desde: DD/MM/YYYY - Saldo em DD/MM/YYYY: 000,00
+			Cliente: Z - Cliente desde: DD/MM/YYYY - Saldo em DD/MM/YYYY: 00,00
+*/
+		
+		return relatorioAssembler.RelatorioSaldoTodosClientes(relatorioService.relatorioSaldo()) ;
 		
 	}
 	@PostMapping
@@ -92,9 +109,9 @@ private RelatorioService relatorioService;
 		OffsetDateTime inicio = OffsetDateTime.parse(dataInput.getDataInicio().concat("T00:00:00.246+00:00"));
 		OffsetDateTime fim = OffsetDateTime.parse(dataInput.getDataFim().concat("T23:59:59.246+00:00"));
 		
-	List<RelatorioPeriodoClientes> relatorio = relatorioService.RPReceita(inicio, fim) ;
+//	List<RelatorioPeriodoClientes> relatorio = relatorioService.RPReceita(inicio, fim) ;
 	
-		List<String> lista = new ArrayList<>();
+	/*	List<String> lista = new ArrayList<>();
 		lista.add("Periodo: ".concat(dataInput.getDataInicio().concat(" a ")
 				.concat(dataInput.getDataFim())));
 		Integer x = 0;
@@ -112,8 +129,8 @@ private RelatorioService relatorioService;
 			x++;
 		
 		}
-		lista.add("Total de receitas: ".concat(receita.toString()));
-		return  lista;  
+		lista.add("Total de receitas: ".concat(receita.toString()));  */
+		return  relatorioAssembler.RelatorioPeriodoCliente(relatorioService.RPReceita(inicio, fim), dataInput);  
 	//	return   relatorioService.RPReceita(inicio, fim) ;   
 	}
 	
