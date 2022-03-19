@@ -63,17 +63,10 @@ public class ClienteController {
 	@ResponseStatus(HttpStatus.CREATED)
 	public Cliente cadastrar (@RequestBody ClienteInput clienteInput  ,  ContaInput contaInput /*Transacoes transacao*/) {
 		clienteInput.setData_cliente(OffsetDateTime.now());
-		//clienteInput.setContas(contaInput);
 		Cliente nCliente = clienteAssembler.toEntity(clienteInput);
-		
-
-		//nCliente.setConta(contaService.cadastrar(nConta)); 
-		
-	//	nCliente.setConta(); */
-		//Cliente novoCliente = crudCliente.salvar(nCliente);
-		/*cliente.cadastrarContas(conta.getNumeroConta());*/
-		
+		nCliente.setParametro(OffsetDateTime.now());
 		nCliente.setTaxa(0F);
+		
 		Cliente clienteSalvo = crudCliente.salvar(nCliente/* conta, transacao*/);
 
 		Contas nConta  = contaAssembler.toEntity(contaInput); 
@@ -82,26 +75,13 @@ public class ClienteController {
 		nConta.setSaldo(clienteInput.getContas().getSaldo());
 		nConta.setTaxas(0F);
 		List<Transacoes> transacao = nConta.getTransacoes();
-		
-		
-		//nConta.efetuarTransacao(clienteInput.getContas().getTipoMovimentacao(), clienteInput.getContas().getSaldo(), clienteInput.getContas().getSaldo(), 1);
-		
-		
+
 		Contas novaConta = contaService.cadastrar(nConta);
 		registroTransacaoService.registrar(novaConta.getId(), "credito", 0F);
 		
 		
 		return clienteSalvo;
-		
-		
-		
-		/*public ContaOutput cadastrar (@RequestBody ContaInput contaInput) {
-		
-		Contas nConta = contaAssembler.toEntity(contaInput);
-		Contas novaConta = contaService.cadastrar(nConta);
-		
-		return contaAssembler.toModel(novaConta);
-	}*/
+	
 	}
 	
 	@PutMapping("/{clienteId}")
