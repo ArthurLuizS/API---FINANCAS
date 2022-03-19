@@ -1,5 +1,6 @@
 package com.Projeto1.SFinanceiro.domain.service;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collector;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.Projeto1.SFinanceiro.domain.model.Cliente;
 import com.Projeto1.SFinanceiro.domain.model.Contas;
 import com.Projeto1.SFinanceiro.domain.model.Transacoes;
+import com.Projeto1.SFinanceiro.domain.repository.ClienteRepository;
 import com.Projeto1.SFinanceiro.domain.repository.TransacoesRepository;
 
 import lombok.AllArgsConstructor;
@@ -22,11 +24,12 @@ public class RegistroTransacaoService {
 
 	private BuscaContaService buscaContaService;
 	private TransacoesRepository transacoesRepository;
+	private ClienteRepository clienteRepository;
 	
 	@Transactional
 	public Transacoes registrar(Long contaId, String tipoMovimentacao, Float valor) {
 			Contas conta = buscaContaService.buscar(contaId);
-			Cliente cliente = conta.getCliente();
+			Cliente cliente = clienteRepository.getById(conta.getCliente().getId());
 			
 
 	
@@ -45,28 +48,33 @@ public class RegistroTransacaoService {
 			
 			conta.setSaldo(nvalor);
 			
-			
-			//------------------
-			Float[] taxas = {(float) 1, (float) 0.75, (float) 0.5};
 		
-			cliente.getConta().forEach(c -> {
-				cliente.setTransQtd(cliente.getTransQtd() + c.getTransacoes().size());
-				
-			});
+			//--------Fazer com que as taxas sejam resetadas a cada 30Dias----------
+			String data = "2022-03-28";
+			OffsetDateTime dataManipulada = OffsetDateTime.parse(data
+					.concat("T00:01:11.246-03:00"));
 			
-			if(cliente.getTransQtd() <= 9 ) {
-				conta.setTaxas(conta.getTaxas() + taxas[0]);
-				cliente.setTaxa(cliente.getTaxa() + taxas[0]);
-				
-			}else if(cliente.getTransQtd() > 9 && cliente.getTransQtd()<=19) {
-				conta.setTaxas(conta.getTaxas() + taxas[1]);
-				cliente.setTaxa(cliente.getTaxa() + taxas[1]);
-				
-			}else if (cliente.getTransQtd() > 19) {
-				conta.setTaxas(conta.getTaxas() + taxas[2]);
-				cliente.setTaxa(cliente.getTaxa() + taxas[2]);
+			if(OffsetDateTime.now().compareTo(cliente.getParametro()) < 30) {
+				cliente.setParametroTrans(cliente.getParametroTrans() + 1);
+			}else {
+				cliente.setParametro(cliente.getParametro().plusDays(30));
+				cliente.setParametroTrans(1);
 			}
-		
+	
+			if(cliente.getParametroTrans() <= 10) {
+				conta.setTaxas(conta.getTaxas() + 1);
+				cliente.setTaxa(cliente.getTaxa() + 1);
+			} else if (cliente.getParametroTrans() > 10 && cliente.getParametroTrans() <= 20 ) {
+				conta.setTaxas(conta.getTaxas()+ 0.75F);
+				cliente.setTaxa(cliente.getTaxa() +  0.75F);
+			}else {
+				conta.setTaxas(conta.getTaxas() +  0.5F);
+				cliente.setTaxa(cliente.getTaxa() + 0.5F);
+			}
+
+			//------------------
+	
 		 return conta.efetuarTransacao(tipoMovimentacao, valor, avalor, tipo);
 	}
+	
 }
