@@ -49,39 +49,24 @@ public class RelatorioService {
 		Optional<Cliente> cliente = clienteRepository.findById(clienteId);
 		cliente.get().getConta().forEach(conta -> {
 			Endereco e = conta.getCliente().getEndereco();
-			//---------
 			List<Transacoes> transacoesd = new ArrayList<>();
 			List<Transacoes> transacoesc = new ArrayList<>();
 			transacoesd = conta.getTransacoes().stream().filter(t -> t.getTipo() == 1).toList();
 			transacoesc = conta.getTransacoes().stream().filter(t -> t.getTipo() == 2).toList();
-			r.setMovimentacaoDebito(transacoesd.size() + r.getMovimentacaoDebito());
-			r.setMovimentacaoCredito(transacoesc.size()+ r.getMovimentacaoCredito() );
 			//---------
 			//sets manuais
+			r.setMovimentacaoDebito(transacoesd.size() + r.getMovimentacaoDebito());
+			r.setMovimentacaoCredito(transacoesc.size()+ r.getMovimentacaoCredito() );
 			r.setCliente_Id(conta.getCliente().getId());
-			//r.setValor(r.getValor());
-			
-			//r.setMovimentacoes(conta.getTransacoes().size() + r.getMovimentacoes());
-		
-			//r.setMovimentacaoDebito(conta.getTransacoes().);
 			r.setCliente(conta.getCliente().getNome());
 			r.setEndereco(e.getCidade().concat(" , ").concat(e.getBairro().concat(" , ").concat(e.getLogradouro()) ));
 			r.setData_cliente(conta.getCliente().getData_cliente());
-			
-			//r.setSaldoInicial(conta.getTransacoes().get(0).getSaldo_inicial());
 			r.setSaldoAtual(conta.getSaldo()+r.getSaldoAtual());
-			 
-			//r.setValor(conta.getTaxas() + r.getValor());
-			
-			
-			
-			r.setTaxaCliente(conta.getTaxas() + r.getTaxaCliente());
-			
+			 	
 		});
-		
-		//r.setTranss(cliente.get());		
+		r.setTaxaCliente(cliente.get().getTaxa());				
 		r.setSaldoInicial(cliente.get().getConta().get(0).getTransacoes().get(0).getSaldo_inicial());
-		//r.setSaldoInicial(conta.getTransacoes().get(0).getSaldo_inicial());
+	
 		r.setQuantidadeContas(cliente.get().getConta().size());
 		/*
 		
@@ -157,8 +142,6 @@ public class RelatorioService {
 
 		while(x  <= clienteRepository.count()) {
 			RelatorioSaldo relatorioSaldo = new RelatorioSaldo();
-			
-		//	relatorio.add(crudCliente.buscar(x));
 		 
 			relatorioSaldo.setCliente(crudCliente.buscar(x).getNome());
 			relatorioSaldo.setDataCliente(clienteRepository.getById(x).getData_cliente());
@@ -181,6 +164,7 @@ public class RelatorioService {
 			OffsetDateTime dataFim) {
 			RelatorioPeriodoClientes rpc = new RelatorioPeriodoClientes();
 			Cliente cliente = crudCliente.buscar(clienteId);
+			
 			rpc.setCliente(cliente.getNome());
 			rpc.setData_cliente(cliente.getData_cliente());
 			rpc.setEndereco(relatorioIndividual(clienteId).getEndereco());
@@ -194,15 +178,13 @@ public class RelatorioService {
 		contas.forEach(c -> 
 		transacoes.addAll(c.getTransacoes()));
 		//------------------------------
-		//PARA TESTAR QUANDO VOLTAR A INTERNET
+		//FILTRANSO TRANSACOES PELAS DATAS
 		transacoes.forEach(t -> {
 		if(t.getData().isAfter(dataInicio) && t.getData().isBefore(dataFim)){
 			transacoesFiltradas.add(t);	
 		}});
 		//-------------------------------
-		
-		// FALTA FILTRAR AS TRANSACOES POR DATAS -- NO MOMENTO APENAS AS CONTAS QUE SÃO
-		//ALTERANDO APENAS TRANSACOES PARA TRANSACOESFILTRADAS ->
+	
 			Long credito = transacoesFiltradas.stream().filter(t -> t.getTipo() == 2).count();
 			Long debito = transacoesFiltradas.stream().filter(t -> t.getTipo() == 1).count();
 			rpc.setMovimentacaoCredito(credito.intValue());
@@ -221,44 +203,6 @@ public class RelatorioService {
 				rpc.setTaxas(20F + sobra * 0.5F );
 			};
 			
-	/*	Integer credito = 0;
-			Integer debito = 0;
-			contas.forEach(c -> {
-				List<Transacoes > transf = new ArrayList<>();
-				
-				transf = c.getTransacoes().stream().filter(t -> t.getData().isAfter(dataInicio)
-						&& t.getData().isBefore(dataFim)).toList();
-				
-				rpc.setMovimentacaoCredito(transf.stream().filter(t -> t.getTipo() == 2).collect(Collectors.toList()).size());
-				
-				rpc.setMovimentacaoDebito(transf.stream().filter(t -> t.getTipo() == 1).collect(Collectors.toList()).size());
-/*				rpc.setMovimentacaoCredito(transf.stream().filter(t -> t.getTipo() == 2).collect(Collectors.toList()).size());
-				
-				List<Transacoes> transacoesd = new ArrayList<>();
-				List<Transacoes> transacoesc = new ArrayList<>();
-				transacoesd = c.getTransacoes().stream().filter(t -> t.getTipo() == 1).toList();
-				transacoesc = c.getTransacoes().stream().filter(t -> t.getTipo() == 2).toList();
-				rpc.setMovimentacaoDebito(transacoesd.size() + rpc.getMovimentacaoDebito());
-				rpc.setMovimentacaoCredito(transacoesc.size()+ rpc.getMovimentacaoCredito() );
-*/				
-				/*
-				rpc.setMovimentacaoCredito(rpc.getMovimentacaoCredito() + c.getTransacoes().stream()
-						.filter(t -> t.getTipo() ==2 ).collect(Collectors.toList()).size());  */
-	//					});
-					
-	//rpc.setMovimentacaoCredito(resumo.stream().filter(t -> t.getTipo() == 1).collect(Collectors.toList()).size());
-					
-	/*		if (transacao.getData().isAfter(inicio) && transacao.getData().isBefore(fim)) {
-				transacoes.add(transacao);
-			}
-			
-			rpc.setMovimentacaoCredito(1); */
-	
-
-	//			rpc.setMovimentacaoDebito(transf.stream().filter(t -> t.getTipo() == 1).collect(Collectors.toList()).size());
-	//			rpc.setMovimentacaoCredito(transf.stream().filter(t -> t.getTipo() == 2).collect(Collectors.toList()).size());
-		
-//	return transacoes;		
 	return  rpc;
 	}
 }
