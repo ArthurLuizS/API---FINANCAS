@@ -9,10 +9,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Transient;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-
+@JsonInclude(Include.NON_NULL)
 @Getter
 @Setter
 @Entity
@@ -36,7 +39,6 @@ public class Relatorio {
 	
 	//@Transient
 	//private Float taxacliente = 0F;
-	
 	
 	
 	@Transient
