@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.Projeto1.SFinanceiro.api.Assembler.TransacaoAssembler;
+import com.Projeto1.SFinanceiro.api.Model.TransacaoOutput;
 import com.Projeto1.SFinanceiro.domain.model.Transacoes;
 import com.Projeto1.SFinanceiro.domain.service.RegistroTransacaoService;
 
@@ -19,12 +21,14 @@ import lombok.AllArgsConstructor;
 public class TransacaoController {
 	
 	private RegistroTransacaoService registroTransacaoService;
+	private TransacaoAssembler transacaoAssembler;
 	
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public Transacoes cadastrar(@PathVariable Long contaId, @RequestBody Transacoes transacoes) {
+	public TransacaoOutput cadastrar(@PathVariable Long contaId, @RequestBody Transacoes transacoes) {
+		Transacoes transacao = registroTransacaoService.registrar(contaId, transacoes.getTipoMovimentacao(), transacoes.getValor());
 		
-		return registroTransacaoService.registrar(contaId, transacoes.getTipoMovimentacao(), transacoes.getValor());
+		return transacaoAssembler.toModel(transacao);
 		
 	}
 }

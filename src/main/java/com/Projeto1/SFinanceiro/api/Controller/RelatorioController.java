@@ -83,21 +83,11 @@ private RelatorioService relatorioService;
 	
 	@GetMapping
 	public List<String> listarTodos() {
-	/*	List<String> lista = new ArrayList<>();
-		List<RelatorioSaldo> relatorio = relatorioService.relatorioSaldo();
-		
-		for(Integer i = 0; i < relatorio.size(); i++) {
-			lista.add("Cliente: ".concat(relatorio.get(i).getCliente())
-					.concat(" - Cliente desde: ").concat(relatorio.get(i).getDataCliente().toString())
-					.concat(" - Saldo em: ").concat(relatorio.get(i).getDataSaldo().toString())
-					.concat(" : ").concat(relatorio.get(i).getSaldo().toString()));
-		}
-		
 		/*Relatório de saldo de todos os clientes;
 			Cliente: X - Cliente desde: DD/MM/YYYY – Saldo em DD/MM/YYYY: 0.000,00
 			Cliente: Y - Cliente desde: DD/MM/YYYY - Saldo em DD/MM/YYYY: 000,00
 			Cliente: Z - Cliente desde: DD/MM/YYYY - Saldo em DD/MM/YYYY: 00,00
-*/
+		 */
 		
 		return relatorioAssembler.RelatorioSaldoTodosClientes(relatorioService.relatorioSaldo()) ;
 		
@@ -109,29 +99,8 @@ private RelatorioService relatorioService;
 		OffsetDateTime inicio = OffsetDateTime.parse(dataInput.getDataInicio().concat("T00:00:00.246+00:00"));
 		OffsetDateTime fim = OffsetDateTime.parse(dataInput.getDataFim().concat("T23:59:59.246+00:00"));
 		
-//	List<RelatorioPeriodoClientes> relatorio = relatorioService.RPReceita(inicio, fim) ;
-	
-	/*	List<String> lista = new ArrayList<>();
-		lista.add("Periodo: ".concat(dataInput.getDataInicio().concat(" a ")
-				.concat(dataInput.getDataFim())));
-		Integer x = 0;
-		Float receita = 0F; 
-		while (x < relatorio.size()) {
-	 
-			if(relatorio.get(x).getMovimentacoes() > 0) {
-			lista.add("Cliente: ".concat(relatorio.get(x).getCliente()
-					.concat("  - Quantidade de movimentações: "))
-					.concat(relatorio.get(x).getMovimentacoes().toString())
-					.concat(", Valor das movimentações: ")
-					.concat(relatorio.get(x).getTaxas().toString()));
-			receita = relatorio.get(x).getTaxas() + receita;
-			}
-			x++;
-		
-		}
-		lista.add("Total de receitas: ".concat(receita.toString()));  */
 		return  relatorioAssembler.RelatorioPeriodoCliente(relatorioService.RPReceita(inicio, fim), dataInput);  
-	//	return   relatorioService.RPReceita(inicio, fim) ;   
+  
 	}
 	
 }
