@@ -18,10 +18,13 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-
+@JsonInclude(Include.NON_NULL)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Getter
 @Setter
@@ -53,6 +56,12 @@ public class Cliente {
 	private Relatorio relatorio;
 	
 	private Float taxa = 0F; 
+	
+	
+	private OffsetDateTime parametro;
+	
+	@Column(name = "parametro_transacoes")
+	private Integer parametroTrans = 0;
 	
 	@Transient
 	private Integer transQtd = 0;
