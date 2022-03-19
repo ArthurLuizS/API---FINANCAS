@@ -178,7 +178,7 @@ public class RelatorioService {
 		contas.forEach(c -> 
 		transacoes.addAll(c.getTransacoes()));
 		//------------------------------
-		//FILTRANSO TRANSACOES PELAS DATAS
+		//FILTRANDO TRANSACOES PELAS DATAS
 		transacoes.forEach(t -> {
 		if(t.getData().isAfter(dataInicio) && t.getData().isBefore(dataFim)){
 			transacoesFiltradas.add(t);	
