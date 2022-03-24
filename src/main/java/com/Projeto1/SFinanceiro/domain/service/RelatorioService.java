@@ -173,6 +173,7 @@ public class RelatorioService {
 		transacoes.addAll(c.getTransacoes()));
 		//------------------------------
 		//FILTRANDO TRANSACOES POR DATA
+
 		transacoes.forEach(t -> {
 		if(t.getData().isAfter(dataInicio) && t.getData().isBefore(dataFim)){
 			transacoesFiltradas.add(t);	
