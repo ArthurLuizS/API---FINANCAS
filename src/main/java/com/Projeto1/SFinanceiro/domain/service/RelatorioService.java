@@ -2,13 +2,9 @@ package com.Projeto1.SFinanceiro.domain.service;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.TimeZone;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.transaction.Transactional;
 
@@ -18,7 +14,6 @@ import com.Projeto1.SFinanceiro.domain.model.Cliente;
 import com.Projeto1.SFinanceiro.domain.model.Contas;
 import com.Projeto1.SFinanceiro.domain.model.Endereco;
 import com.Projeto1.SFinanceiro.domain.model.Relatorio;
-import com.Projeto1.SFinanceiro.domain.model.RelatorioPeriodo;
 import com.Projeto1.SFinanceiro.domain.model.RelatorioPeriodoClientes;
 import com.Projeto1.SFinanceiro.domain.model.RelatorioSaldo;
 //import com.Projeto1.SFinanceiro.domain.model.Relatorio;
@@ -28,7 +23,6 @@ import com.Projeto1.SFinanceiro.domain.repository.ContasRepository;
 import com.Projeto1.SFinanceiro.domain.repository.RelatorioRepository;
 import com.Projeto1.SFinanceiro.domain.repository.TransacoesRepository;
 
-import ch.qos.logback.core.filter.Filter;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -178,7 +172,7 @@ public class RelatorioService {
 		contas.forEach(c -> 
 		transacoes.addAll(c.getTransacoes()));
 		//------------------------------
-		//FILTRANSO TRANSACOES PELAS DATAS
+		//FILTRANDO TRANSACOES POR DATA
 		transacoes.forEach(t -> {
 		if(t.getData().isAfter(dataInicio) && t.getData().isBefore(dataFim)){
 			transacoesFiltradas.add(t);	
